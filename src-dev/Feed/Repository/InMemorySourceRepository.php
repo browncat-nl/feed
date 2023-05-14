@@ -2,6 +2,7 @@
 
 namespace Dev\Feed\Repository;
 
+use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\Source;
 use App\Feed\Domain\Source\SourceId;
 use App\Feed\Domain\Source\SourceRepository;
@@ -23,5 +24,10 @@ final class InMemorySourceRepository implements SourceRepository
     public function find(SourceId $id): ?Source
     {
         return $this->entities[(string) $id] ?? null;
+    }
+
+    public function findOrThrow(SourceId $id): Source
+    {
+        return $this->find($id) ?? throw SourceNotFoundException::withSourceId($id);
     }
 }
