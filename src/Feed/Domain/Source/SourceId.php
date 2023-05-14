@@ -2,16 +2,8 @@
 
 namespace App\Feed\Domain\Source;
 
-use Stringable;
+use App\Common\Identifier\UuidId;
 
-final readonly class SourceId implements Stringable
+final class SourceId extends UuidId
 {
-    public function __construct(private string $id)
-    {
-    }
-
-    public function __toString(): string
-    {
-        return $this->id;
-    }
 }

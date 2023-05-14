@@ -2,16 +2,8 @@
 
 namespace App\Feed\Domain\Article;
 
-use Stringable;
+use App\Common\Identifier\UuidId;
 
-final readonly class ArticleId implements Stringable
+final class ArticleId extends UuidId
 {
-    public function __construct(private string $id)
-    {
-    }
-
-    public function __toString(): string
-    {
-        return $this->id;
-    }
 }
