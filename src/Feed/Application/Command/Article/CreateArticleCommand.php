@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Feed\Application\Command;
+namespace App\Feed\Application\Command\Article;
 
-use App\Feed\Application\Command\Handler\CreateArticleHandler;
-use App\Feed\Domain\Source\Source;
-use App\Feed\Domain\Source\SourceId;
+use App\Feed\Application\Command\Article\Handler\CreateArticleHandler;
 use DateTime;
 
 /**

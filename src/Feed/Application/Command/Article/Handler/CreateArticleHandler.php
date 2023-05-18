@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Feed\Application\Command\Handler;
+namespace App\Feed\Application\Command\Article\Handler;
 
-use App\Feed\Application\Command\CreateArticleCommand;
+use App\Feed\Application\Command\Article\CreateArticleCommand;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
 use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
 use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
-use App\Feed\Domain\Source\Source;
 use App\Feed\Domain\Source\SourceId;
 use App\Feed\Domain\Source\SourceRepository;
 
