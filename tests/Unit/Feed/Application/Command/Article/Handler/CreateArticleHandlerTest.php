@@ -1,9 +1,9 @@
 <?php
 
-namespace Unit\Feed\Application\Command\Handler;
+namespace Unit\Feed\Application\Command\Article\Handler;
 
-use App\Feed\Application\Command\CreateArticleCommand;
-use App\Feed\Application\Command\Handler\CreateArticleHandler;
+use App\Feed\Application\Command\Article\CreateArticleCommand;
+use App\Feed\Application\Command\Article\Handler\CreateArticleHandler;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
 use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
