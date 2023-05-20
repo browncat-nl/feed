@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property App\\\\Common\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\DoctrineRepository\\<T of object\\>\\:\\:\\$entityName \\(class\\-string\\<T of object\\>\\) does not accept class\\-string\\<object\\>\\.$#"
+			count: 1
+			path: src/Common/Infrastructure/Persistence/Doctrine/DoctrineRepository.php

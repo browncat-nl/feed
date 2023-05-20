@@ -20,8 +20,7 @@ jobs:
       - uses: php-actions/composer@v6
       - uses: php-actions/phpstan@v3
         with:
-          path: src/ src-dev/ tests/
-          level: 9
+          configuration: "phpstan.neon"
 
   phpunit:
     runs-on: ubuntu-latest
