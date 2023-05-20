@@ -16,7 +16,7 @@ final class InMemoryArticleRepository implements ArticleRepository
     public function save(Article ...$articles): void
     {
         foreach ($articles as $article) {
-            $this->entities[(string) $article->id] = $article;
+            $this->entities[(string) $article->getId()] = $article;
         }
     }
 
