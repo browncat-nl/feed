@@ -1,0 +1,50 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '15'
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            # @todo maybe do something cute with this so we don't have to define them all by hand in this one file
+            FeedArticle:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Feed/Domain/Article'
+                prefix: 'App\Feed\Domain\Article'
+                alias: FeedArticle
+            FeedSource:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Feed/Domain/Source'
+                prefix: 'App\Feed\Domain\Source'
+                alias: FeedSource
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system
