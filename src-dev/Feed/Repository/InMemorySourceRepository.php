@@ -17,7 +17,7 @@ final class InMemorySourceRepository implements SourceRepository
     public function save(Source ...$sources): void
     {
         foreach ($sources as $source) {
-            $this->entities[(string) $source->id] = $source;
+            $this->entities[(string) $source->getId()] = $source;
         }
     }
 

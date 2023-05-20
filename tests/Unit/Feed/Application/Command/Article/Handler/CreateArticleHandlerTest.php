@@ -55,7 +55,7 @@ final class CreateArticleHandlerTest extends TestCase
             $summary,
             $url,
             $updated,
-            $source->id,
+            $source->getId(),
         );
 
         // Act
@@ -65,12 +65,12 @@ final class CreateArticleHandlerTest extends TestCase
         $article = $this->articleRepository->find(new ArticleId($articleId));
 
         self::assertNotNull($article);
-        self::assertSame((string) $articleId, (string) $article->id);
-        self::assertSame($title, $article->title);
-        self::assertSame($summary, $article->summary);
-        self::assertSame($url, (string) $article->url);
-        self::assertSame($updated, $article->updated);
-        self::assertSame($source, $article->source);
+        self::assertSame((string) $articleId, (string) $article->getId());
+        self::assertSame($title, $article->getTitle());
+        self::assertSame($summary, $article->getSummary());
+        self::assertSame($url, (string) $article->getUrl());
+        self::assertSame($updated, $article->getUpdated());
+        self::assertSame($source, $article->getSource());
     }
 
     /**
@@ -117,7 +117,7 @@ final class CreateArticleHandlerTest extends TestCase
             'This article is about bananas.',
             $malformedUrl,
             new DateTime(),
-            $source->id,
+            $source->getId(),
         );
 
         // Assert
@@ -144,7 +144,7 @@ final class CreateArticleHandlerTest extends TestCase
             'This article is about bananas.',
             'ftp://example.com/ftp-is-an-unsupported-scheme',
             new DateTime(),
-            $source->id,
+            $source->getId(),
         );
 
         // Assert
