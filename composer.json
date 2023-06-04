@@ -10,6 +10,8 @@
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",
+        "nelmio/cors-bundle": "^2.3",
+        "overblog/graphql-bundle": "^0.15.2",
         "ramsey/uuid": "^4.7",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
