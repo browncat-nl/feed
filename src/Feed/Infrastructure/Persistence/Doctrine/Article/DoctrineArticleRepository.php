@@ -36,7 +36,7 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
     public function findLatest(int $numberOfArticles): array
     {
         return $this->createQueryBuilder('a')
-            ->orderBy('updated', Criteria::DESC)
+            ->orderBy('a.updated', Criteria::DESC)
             ->setMaxResults($numberOfArticles)
             ->getQuery()
             ->getResult()
