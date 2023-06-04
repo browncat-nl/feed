@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'articles')]
-final readonly class Article
+class Article
 {
     #[ORM\Id, ORM\Column(type: 'string')]
     private string $id;
