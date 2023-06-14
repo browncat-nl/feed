@@ -13,12 +13,13 @@
         "nelmio/cors-bundle": "^2.3",
         "overblog/graphql-bundle": "^0.15.2",
         "ramsey/uuid": "^4.7",
-        "symfony/console": "6.2.*",
-        "symfony/dotenv": "6.2.*",
+        "symfony/console": "6.3.*",
+        "symfony/dotenv": "6.3.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.2.*",
-        "symfony/runtime": "6.2.*",
-        "symfony/yaml": "6.2.*"
+        "symfony/framework-bundle": "6.3.*",
+        "symfony/messenger": "6.3.*",
+        "symfony/runtime": "6.3.*",
+        "symfony/yaml": "6.3.*"
     },
     "config": {
         "allow-plugins": {
@@ -66,7 +67,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.2.*"
+            "require": "6.3.*"
         }
     },
     "require-dev": {
@@ -74,8 +75,8 @@
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "^3.7",
-        "symfony/browser-kit": "6.2.*",
-        "symfony/css-selector": "6.2.*",
-        "symfony/phpunit-bridge": "^6.2"
+        "symfony/browser-kit": "6.3.*",
+        "symfony/css-selector": "6.3.*",
+        "symfony/phpunit-bridge": "^6.3"
     }
 }
