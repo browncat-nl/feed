@@ -4,6 +4,7 @@ namespace App\Feed\Application\Command\Article;
 
 use App\Feed\Application\Command\Article\Handler\CreateArticleHandler;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
  * @see CreateArticleHandler

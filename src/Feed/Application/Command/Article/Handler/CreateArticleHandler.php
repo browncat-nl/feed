@@ -2,6 +2,7 @@
 
 namespace App\Feed\Application\Command\Article\Handler;
 
+use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
 use App\Feed\Application\Command\Article\CreateArticleCommand;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
@@ -11,8 +12,10 @@ use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\SourceId;
 use App\Feed\Domain\Source\SourceRepository;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class CreateArticleHandler
+#[AsCommandHandler]
+final readonly class CreateArticleHandler
 {
     public function __construct(
         private ArticleRepository $articleRepository,
