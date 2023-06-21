@@ -22,7 +22,7 @@ jobs:
         with:
           configuration: "phpstan.neon"
 
-  phpunit:
+  unit_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,3 +31,4 @@ jobs:
         with:
           configuration: "phpunit.xml.dist"
           version: "9.5"
+          args: tests/Unit
