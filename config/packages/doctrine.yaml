@@ -23,12 +23,6 @@ doctrine:
                 prefix: 'App\Feed\Domain\Source'
                 alias: FeedSource
 
-when@test:
-    doctrine:
-        dbal:
-            # "TEST_TOKEN" is typically set by ParaTest
-            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
-
 when@prod:
     doctrine:
         orm:

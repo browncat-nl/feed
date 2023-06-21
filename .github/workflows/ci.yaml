@@ -32,3 +32,29 @@ jobs:
           configuration: "phpunit.xml.dist"
           version: "9.5"
           args: tests/Unit
+
+  functional_tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_PASSWORD: development
+          POSTGRES_USER: development
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql
+      - run: composer install
+      - run: php bin/console doctrine:schema:create --env=test
+      - run: vendor/bin/phpunit tests/Functional
