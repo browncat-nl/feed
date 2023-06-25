@@ -45,4 +45,38 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
         self::assertEquals($article1->getId(), $articles[0]->getId());
         self::assertEquals($article3->getId(), $articles[1]->getId());
     }
+
+    /**
+     * @test
+     */
+    public function it_should_find_the_article_by_its_url(): void
+    {
+        // Arrange
+        $source = (new SourceFactory())->create();
+        $this->getDoctrine()->getManager()->persist($source);
+
+        $article = (new ArticleFactory())->withSource($source)->create();
+
+        $this->repository->save($article);
+        $this->getDoctrine()->resetManager();
+
+        // Act
+        $foundArticle = $this->repository->findByUrl($article->getUrl());
+
+        // Assert
+        self::assertNotNull($foundArticle);
+        self::assertEquals($article->getId(), $foundArticle->getId());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_null_if_there_is_no_article_with_given_url(): void
+    {
+        // Act
+        $foundArticle = $this->repository->findByUrl('http://non-existing.com/non-existing');
+
+        // Assert
+        self::assertNull($foundArticle);
+    }
 }

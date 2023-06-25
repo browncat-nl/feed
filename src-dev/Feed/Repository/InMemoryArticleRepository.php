@@ -5,6 +5,7 @@ namespace Dev\Feed\Repository;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
+use App\Feed\Domain\Article\Url\Url;
 
 final class InMemoryArticleRepository implements ArticleRepository
 {
@@ -32,5 +33,18 @@ final class InMemoryArticleRepository implements ArticleRepository
         usort($entities, fn (Article $a, Article $b) => $a->getUpdated() > $b->getUpdated() ? -1 : 1);
 
         return array_values(array_slice($entities, 0, $numberOfArticles));
+    }
+
+    public function findByUrl(string $url): ?Article
+    {
+        foreach ($this->entities as $entity) {
+            if ($url !== (string) $entity->getUrl()) {
+                continue;
+            }
+
+            return $entity;
+        }
+
+        return null;
     }
 }
