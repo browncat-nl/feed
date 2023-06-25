@@ -14,3 +14,8 @@ parameters:
 			message: "#^Parameter \\#2 \\$configurator of method Symfony\\\\Component\\\\DependencyInjection\\\\ContainerBuilder\\:\\:registerAttributeForAutoconfiguration\\(\\) expects callable\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, Reflector\\)\\: void, Closure\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, ReflectionClass\\|ReflectionMethod\\)\\: void given\\.$#"
 			count: 1
 			path: src/Kernel.php
+
+		-
+			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Source\\\\DoctrineSourceRepository\\:\\:findByNameOrThrow\\(\\) should return App\\\\Feed\\\\Domain\\\\Source\\\\Source but returns mixed\\.$#"
+			count: 1
+			path: src/Feed/Infrastructure/Persistence/Doctrine/Source/DoctrineSourceRepository.php

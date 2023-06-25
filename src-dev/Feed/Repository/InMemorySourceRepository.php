@@ -12,7 +12,7 @@ final class InMemorySourceRepository implements SourceRepository
     /**
      * @var array<string, Source>
      */
-    private array $entities;
+    private array $entities = [];
 
     public function save(Source ...$sources): void
     {
@@ -29,5 +29,18 @@ final class InMemorySourceRepository implements SourceRepository
     public function findOrThrow(SourceId $id): Source
     {
         return $this->find($id) ?? throw SourceNotFoundException::withSourceId($id);
+    }
+
+    public function findByNameOrThrow(string $name): Source
+    {
+        foreach ($this->entities as $entity) {
+            if ($entity->getName() !== $name) {
+                continue;
+            }
+
+            return $entity;
+        }
+
+        throw SourceNotFoundException::withName($name);
     }
 }

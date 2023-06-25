@@ -14,4 +14,9 @@ interface SourceRepository
      * @throws SourceNotFoundException
      */
     public function findOrThrow(SourceId $id): Source;
+
+    /**
+     * @throws SourceNotFoundException
+     */
+    public function findByNameOrThrow(string $name): Source;
 }
