@@ -42,4 +42,14 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
             ->getResult()
         ;
     }
+
+    public function findByUrl(string $url): ?Article
+    {
+        return $this->createQueryBuilder('article')
+            ->where('article.url = :url')
+            ->setParameter('url', $url)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
