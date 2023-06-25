@@ -2,22 +2,21 @@
 
 namespace App\Feed\Application\Command\Article;
 
-use App\Feed\Application\Command\Article\Handler\CreateArticleHandler;
+use App\Feed\Application\Command\Article\Handler\UpdateOrCreateArticleHandler;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
- * @see CreateArticleHandler
+ * @see UpdateOrCreateArticleHandler
  */
-final readonly class CreateArticleCommand
+final readonly class UpdateOrCreateArticleCommand
 {
     public function __construct(
-        public string $articleId,
         public string $title,
         public string $summary,
         public string $url,
         public DateTime $updated,
-        public string $sourceId,
+        public string $sourceName,
     ) {
     }
 }
