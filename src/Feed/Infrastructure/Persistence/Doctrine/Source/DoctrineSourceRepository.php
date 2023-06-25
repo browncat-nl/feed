@@ -33,4 +33,16 @@ final readonly class DoctrineSourceRepository extends DoctrineRepository impleme
     {
         return $this->find($id) ?? throw SourceNotFoundException::withSourceId($id);
     }
+
+    public function findByNameOrThrow(string $name): Source
+    {
+        $source = $this->createQueryBuilder('source')
+            ->where('source.name = :name')
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $source ?? throw SourceNotFoundException::withName($name);
+    }
 }
