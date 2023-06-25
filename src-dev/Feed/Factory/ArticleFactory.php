@@ -30,6 +30,13 @@ final class ArticleFactory
         $this->source = (new SourceFactory())->create();
     }
 
+    public function withSource(Source $source): self
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
     public function withUpdated(DateTime $updated): self
     {
         $this->updated = $updated;
