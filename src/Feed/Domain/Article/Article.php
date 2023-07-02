@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'articles')]
+#[ORM\Index(columns: ['url'], name: 'url_index')]
 class Article
 {
     #[ORM\Id, ORM\Column(type: 'string')]
@@ -20,7 +21,7 @@ class Article
     #[ORM\Column(type: 'text')]
     private string $summary;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'string', length: 512)]
     private string $url;
 
     #[ORM\Column(type: 'datetime')]
