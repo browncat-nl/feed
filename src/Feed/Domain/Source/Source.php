@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'sources')]
+#[ORM\Index(columns: ['name'], name: 'name_index')]
 class Source
 {
     #[ORM\Id, ORM\Column(type: 'string')]
