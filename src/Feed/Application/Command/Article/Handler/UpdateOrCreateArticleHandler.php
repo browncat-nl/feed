@@ -41,31 +41,41 @@ final readonly class UpdateOrCreateArticleHandler
 
         $existingArticle = $this->articleRepository->findByUrl($articleUrl);
 
-        if ($existingArticle !== null) {
-            if ($existingArticle->getUpdated() > $command->updated) {
-                $this->logger->warning('Existing article is fresher then the newly given one.', [
-                    'articleId' => $existingArticle->getId(),
-                    'existingArticleUpdated' => $existingArticle->getUpdated(),
-                    'newArticleUpdated' => $existingArticle->getUpdated(),
-                    'url' => $command->url,
-                ]);
-                return;
-            }
+        if ($existingArticle === null) {
+            $article = new Article(
+                new ArticleId(Uuid::uuid4()),
+                $command->title,
+                $command->summary,
+                Url::createFromString($command->url),
+                $command->updated,
+                $source,
+            );
 
-            $articleId = $existingArticle->getId();
-        } else {
-            $articleId = new ArticleId(Uuid::uuid4());
+            $this->articleRepository->save($article);
+            return;
         }
 
-        $article = new Article(
-            $articleId,
-            $command->title,
-            $command->summary,
-            Url::createFromString($command->url),
-            $command->updated,
-            $source,
-        );
+        if ($existingArticle->getUpdated() === $command->updated) {
+            return;
+        }
 
-        $this->articleRepository->save($article);
+        if ($existingArticle->getUpdated() > $command->updated) {
+            $this->logger->warning('Existing article is fresher then the newly given one.', [
+                'articleId' => $existingArticle->getId(),
+                'existingArticleUpdated' => $existingArticle->getUpdated(),
+                'newArticleUpdated' => $existingArticle->getUpdated(),
+                'url' => $command->url,
+            ]);
+
+            return;
+        }
+
+        $existingArticle->setTitle($command->title);
+        $existingArticle->setSummary($command->summary);
+        $existingArticle->setUrl(Url::createFromString($command->url));
+        $existingArticle->setUpdated($command->updated);
+        $existingArticle->setSource($source);
+
+        $this->articleRepository->save($existingArticle);
     }
 }
