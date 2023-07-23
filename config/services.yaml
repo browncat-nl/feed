@@ -26,3 +26,10 @@ services:
     # @todo this should be replaced by a interface + compilerpass solution
     App\Feed\Infrastructure\Client\Graphql\Query\GetLatestArticlesQuery:
         public: true
+
+when@dev:
+    services:
+        Dev\Fixture\:
+            resource: '../src-dev/Fixture'
+            autowire: true
+            autoconfigure: true
