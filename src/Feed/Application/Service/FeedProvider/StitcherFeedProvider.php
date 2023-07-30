@@ -2,6 +2,7 @@
 
 namespace App\Feed\Application\Service\FeedProvider;
 
+use App\Feed\Infrastructure\Helper\DOM\DOM;
 use DateTime;
 use DOMDocument;
 use DOMElement;
@@ -41,10 +42,10 @@ final readonly class StitcherFeedProvider implements FeedProvider
 
         foreach ($feed->getElementsByTagName('entry') as $entry) {
             try {
-                $rawTitle = $this->getItem($entry, 'title');
-                $rawSummary = $this->getItem($entry, 'summary');
-                $updated = $this->getDateTime($entry, 'updated');
-                $link = self::getLink($entry, 'link');
+                $rawTitle = DOM::getString($entry, 'title');
+                $rawSummary = DOM::getString($entry, 'summary');
+                $updated = DOM::getDateTime($entry, 'updated');
+                $link = DOM::getLink($entry, 'link');
             } catch (OutOfBoundsException | LogicException $exception) {
                 $this->logger->warning('[{source}] Failed to parse entry: {reason}.', [
                     'source' => self::getSource(),
@@ -53,7 +54,6 @@ final readonly class StitcherFeedProvider implements FeedProvider
 
                 continue;
             }
-
 
             $feedItems[] = new FeedItem(
                 trim(html_entity_decode($rawTitle)),
@@ -84,35 +84,5 @@ final readonly class StitcherFeedProvider implements FeedProvider
         );
 
         return html_entity_decode(strip_tags($firstParagraph));
-    }
-
-    private static function getItem(DOMElement $element, string $key): string
-    {
-        return $element->getElementsByTagName($key)->item(0)?->firstChild?->nodeValue
-            ?? throw new OutOfBoundsException(sprintf('`%s` does not exist in DOMElement', $key));
-    }
-
-    private static function getDateTime(DOMElement $element, string $key): DateTime
-    {
-        $value = self::getItem($element, $key);
-
-        if (!$epoch = strtotime($value)) {
-            throw new LogicException(sprintf('value `%s` could not be converted to time', $value));
-        }
-
-        $dateTime = DateTime::createFromFormat(
-            'U',
-            (string) $epoch
-        );
-
-        Assert::notFalse($dateTime);
-
-        return $dateTime;
-    }
-
-    private static function getLink(DOMElement $element, string $key): string
-    {
-        return $element->getElementsByTagName($key)->item(0)?->getAttribute('href')
-            ?? throw new OutOfBoundsException(sprintf('%s does either not exist or has no `href` attribute in DOMElement', $key));
     }
 }
