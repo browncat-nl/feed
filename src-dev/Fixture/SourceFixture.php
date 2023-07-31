@@ -17,6 +17,12 @@ final class SourceFixture extends Fixture
             'stitcher.io',
         ));
 
+        // martinfowler.com
+        $manager->persist(new Source(
+            new SourceId('f2f38859-ba40-4252-90c5-a956056a1dae'),
+            'martinfowler.com',
+        ));
+
         $manager->flush();
     }
 }
