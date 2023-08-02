@@ -3,7 +3,7 @@
 namespace App\Feed\Infrastructure\Console;
 
 use App\Common\Infrastructure\Messenger\CommandBus\CommandBus;
-use App\Feed\Application\Command\Article\UpdateOrCreateArticleCommand;
+use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -42,7 +42,7 @@ class FetchExternalFeedsCLICommand extends Command
         $this->logger->info('[feed:fetch] Start syncing external feeds with our datastore');
 
         foreach ($feedItems as $feedItem) {
-            $this->commandBus->handle(new UpdateOrCreateArticleCommand(
+            $this->commandBus->handle(new UpsertArticleCommand(
                 $feedItem->title,
                 $feedItem->summary,
                 $feedItem->url,

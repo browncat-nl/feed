@@ -2,14 +2,14 @@
 
 namespace App\Feed\Application\Command\Article;
 
-use App\Feed\Application\Command\Article\Handler\UpdateOrCreateArticleHandler;
+use App\Feed\Application\Command\Article\Handler\UpsertArticleHandler;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
- * @see UpdateOrCreateArticleHandler
+ * @see UpsertArticleHandler
  */
-final readonly class UpdateOrCreateArticleCommand
+final readonly class UpsertArticleCommand
 {
     public function __construct(
         public string $title,
