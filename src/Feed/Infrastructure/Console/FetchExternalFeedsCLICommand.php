@@ -4,6 +4,7 @@ namespace App\Feed\Infrastructure\Console;
 
 use App\Common\Infrastructure\Messenger\CommandBus\CommandBus;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
+use App\Feed\Application\Command\Feed\FetchFeedCommand;
 use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -36,18 +37,8 @@ class FetchExternalFeedsCLICommand extends Command
                 'source' => $feedProvider::getSource(),
             ]);
 
-            $feedItems = array_merge($feedItems, $feedProvider->fetchFeedItems());
-        }
-
-        $this->logger->info('[feed:fetch] Start syncing external feeds with our datastore');
-
-        foreach ($feedItems as $feedItem) {
-            $this->commandBus->handle(new UpsertArticleCommand(
-                $feedItem->title,
-                $feedItem->summary,
-                $feedItem->url,
-                $feedItem->updated,
-                $feedItem->source
+            $this->commandBus->handle(new FetchFeedCommand(
+                $feedProvider::getSource(),
             ));
         }
 
