@@ -2,8 +2,8 @@
 
 namespace Unit\Feed\Application\Command\Article\Handler;
 
-use App\Feed\Application\Command\Article\UpdateOrCreateArticleCommand;
-use App\Feed\Application\Command\Article\Handler\UpdateOrCreateArticleHandler;
+use App\Feed\Application\Command\Article\UpsertArticleCommand;
+use App\Feed\Application\Command\Article\Handler\UpsertArticleHandler;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
 use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
@@ -19,9 +19,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Ramsey\Uuid\Uuid;
 
-final class UpdateOrCreateArticleHandlerTest extends TestCase
+final class UpsertArticleHandlerTest extends TestCase
 {
-    private UpdateOrCreateArticleHandler $handler;
+    private UpsertArticleHandler $handler;
     private InMemoryArticleRepository $articleRepository;
     private InMemorySourceRepository $sourceRepository;
 
@@ -33,7 +33,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
         $this->sourceRepository = new InMemorySourceRepository();
         $this->logger = new InMemoryLogger();
 
-        $this->handler = new UpdateOrCreateArticleHandler(
+        $this->handler = new UpsertArticleHandler(
             $this->articleRepository,
             $this->sourceRepository,
             $this->logger,
@@ -56,7 +56,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
         $url = 'https://example.com/bananas?tasty=yes&tracking=loads#banana-phone';
         $updated = new DateTime();
 
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             $title,
             $summary,
             $url,
@@ -95,7 +95,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
         $summary = 'This article is about bananas.';
         $updated = new DateTime('2022-10-5 00:00:00');
 
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             $title,
             $summary,
             (string) $existingArticle->getUrl(),
@@ -133,7 +133,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
         $summary = 'This article is about bananas.';
         $updated = new DateTime('1996-10-27 00:00:00');
 
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             $title,
             $summary,
             (string) $existingArticle->getUrl(),
@@ -166,7 +166,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
     public function it_should_throw_if_source_does_not_exist(): void
     {
         // Arrange
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             'Very interesting article',
             'This article is about bananas.',
             'https://example.com/bananas?tasty=yes&tracking=loads#banana-phone',
@@ -194,7 +194,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
 
         $malformedUrl = 'missing-scheme.com';
 
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             'Very interesting article',
             'This article is about bananas.',
             $malformedUrl,
@@ -220,7 +220,7 @@ final class UpdateOrCreateArticleHandlerTest extends TestCase
 
         $this->sourceRepository->save($source);
 
-        $command = new UpdateOrCreateArticleCommand(
+        $command = new UpsertArticleCommand(
             'Very interesting article',
             'This article is about bananas.',
             'ftp://example.com/ftp-is-an-unsupported-scheme',

@@ -3,7 +3,7 @@
 namespace App\Feed\Application\Command\Article\Handler;
 
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
-use App\Feed\Application\Command\Article\UpdateOrCreateArticleCommand;
+use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Updates the article if the url is found in the article repository, otherwise it creates a new article.
  */
 #[AsCommandHandler]
-final readonly class UpdateOrCreateArticleHandler
+final readonly class UpsertArticleHandler
 {
     public function __construct(
         private ArticleRepository $articleRepository,
@@ -33,7 +33,7 @@ final readonly class UpdateOrCreateArticleHandler
      * @throws MalformedUrlException
      * @throws SourceNotFoundException
      */
-    public function __invoke(UpdateOrCreateArticleCommand $command): void
+    public function __invoke(UpsertArticleCommand $command): void
     {
         $source = $this->sourceRepository->findByNameOrThrow($command->sourceName);
 

@@ -2,7 +2,7 @@
 
 namespace Unit\Feed\Infrastructure\Console;
 
-use App\Feed\Application\Command\Article\UpdateOrCreateArticleCommand;
+use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Service\FeedProvider\FeedItem;
 use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use App\Feed\Infrastructure\Console\FetchExternalFeedsCLICommand;
@@ -87,7 +87,7 @@ final class FetchExternalFeedsCLICommandTest extends TestCase
         $commandTester->execute([]);
 
         // Assert
-        self::assertEquals(new UpdateOrCreateArticleCommand(
+        self::assertEquals(new UpsertArticleCommand(
             'test title 1.1',
             'test summary 1.1',
             'https://example.com/test-title-1-1',
@@ -95,7 +95,7 @@ final class FetchExternalFeedsCLICommandTest extends TestCase
             'dummy_feed_1'
         ), $this->commandBus->shiftCommand());
 
-        self::assertEquals(new UpdateOrCreateArticleCommand(
+        self::assertEquals(new UpsertArticleCommand(
             'test title 2.1',
             'test summary 2.1',
             'https://example.com/test-title-2-1',
