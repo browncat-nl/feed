@@ -6,14 +6,14 @@ parameters:
 			path: src/Common/Infrastructure/Persistence/Doctrine/DoctrineRepository.php
 
 		-
-			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Article\\\\DoctrineArticleRepository\\:\\:findLatest\\(\\) should return array\\<int, App\\\\Feed\\\\Domain\\\\Article\\\\Article\\> but returns mixed\\.$#"
+			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Article\\\\DoctrineArticleRepository\\:\\:findByUrl\\(\\) should return App\\\\Feed\\\\Domain\\\\Article\\\\Article\\|null but returns mixed\\.$#"
 			count: 1
 			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
 
 		-
-			message: "#^Parameter \\#2 \\$configurator of method Symfony\\\\Component\\\\DependencyInjection\\\\ContainerBuilder\\:\\:registerAttributeForAutoconfiguration\\(\\) expects callable\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, Reflector\\)\\: void, Closure\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, ReflectionClass\\|ReflectionMethod\\)\\: void given\\.$#"
+			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Article\\\\DoctrineArticleRepository\\:\\:findLatest\\(\\) should return array\\<int, App\\\\Feed\\\\Domain\\\\Article\\\\Article\\> but returns mixed\\.$#"
 			count: 1
-			path: src/Kernel.php
+			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
 
 		-
 			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Source\\\\DoctrineSourceRepository\\:\\:findByNameOrThrow\\(\\) should return App\\\\Feed\\\\Domain\\\\Source\\\\Source but returns mixed\\.$#"
@@ -21,6 +21,11 @@ parameters:
 			path: src/Feed/Infrastructure/Persistence/Doctrine/Source/DoctrineSourceRepository.php
 
 		-
-			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Article\\\\DoctrineArticleRepository\\:\\:findByUrl\\(\\) should return App\\\\Feed\\\\Domain\\\\Article\\\\Article\\|null but returns mixed\\.$#"
+			message: "#^Parameter \\#2 \\$configurator of method Symfony\\\\Component\\\\DependencyInjection\\\\ContainerBuilder\\:\\:registerAttributeForAutoconfiguration\\(\\) expects callable\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, Reflector\\)\\: void, Closure\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\CommandBus\\\\AsCommandHandler, ReflectionClass\\|ReflectionMethod\\)\\: void given\\.$#"
 			count: 1
-			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
+			path: src/Kernel.php
+
+		-
+			message: "#^Parameter \\#2 \\$configurator of method Symfony\\\\Component\\\\DependencyInjection\\\\ContainerBuilder\\:\\:registerAttributeForAutoconfiguration\\(\\) expects callable\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\EventBus\\\\AsEventSubscriber, Reflector\\)\\: void, Closure\\(Symfony\\\\Component\\\\DependencyInjection\\\\ChildDefinition, App\\\\Common\\\\Infrastructure\\\\Messenger\\\\EventBus\\\\AsEventSubscriber, ReflectionClass\\|ReflectionMethod\\)\\: void given\\.$#"
+			count: 1
+			path: src/Kernel.php

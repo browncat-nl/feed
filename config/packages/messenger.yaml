@@ -5,5 +5,9 @@ framework:
             command.bus:
                 default_middleware:
                     enabled: true
+            event.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
         transports:
         routing:

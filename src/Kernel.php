@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
+use App\Common\Infrastructure\Messenger\EventBus\AsEventSubscriber;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -26,6 +27,20 @@ class Kernel extends BaseKernel
             if ($reflector instanceof \ReflectionMethod) {
                 if (isset($tagAttributes['method'])) {
                     throw new LogicException(sprintf('AsCommandHandler attribute cannot declare a method on "%s::%s()".', $reflector->class, $reflector->name));
+                }
+                $tagAttributes['method'] = $reflector->getName();
+            }
+
+            $definition->addTag('messenger.message_handler', $tagAttributes);
+        });
+
+        $container->registerAttributeForAutoconfiguration(AsEventSubscriber::class, static function (ChildDefinition $definition, AsEventSubscriber $attribute, \ReflectionClass|\ReflectionMethod $reflector): void {
+            $tagAttributes = get_object_vars($attribute);
+            $tagAttributes['bus'] = 'event.bus';
+
+            if ($reflector instanceof \ReflectionMethod) {
+                if (isset($tagAttributes['method'])) {
+                    throw new LogicException(sprintf('AsEventSubscriber attribute cannot declare a method on "%s::%s()".', $reflector->class, $reflector->name));
                 }
                 $tagAttributes['method'] = $reflector->getName();
             }
