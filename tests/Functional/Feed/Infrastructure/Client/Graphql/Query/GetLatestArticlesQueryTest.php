@@ -68,6 +68,11 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
                     title,
                     summary,
                     url
+                    source {
+                        id,
+                        name
+                    },
+                    updated                
                   }
             }
             GRAPHQL
@@ -84,16 +89,31 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
                         'title' => $article->getTitle(),
                         'summary' => $article->getSummary(),
                         'url' => (string) $article->getUrl(),
+                        'source' => [
+                            'id' => (string) $article->getSource()->getId(),
+                            'name' => $article->getSource()->getName(),
+                        ],
+                        'updated' => $article->getUpdated()->format('Y-m-d H:i:s'),
                     ],
                     [
                         'title' => $article3->getTitle(),
                         'summary' => $article3->getSummary(),
                         'url' => (string) $article3->getUrl(),
+                        'source' => [
+                            'id' => (string) $article3->getSource()->getId(),
+                            'name' => $article3->getSource()->getName(),
+                        ],
+                        'updated' => $article3->getUpdated()->format('Y-m-d H:i:s'),
                     ],
                     [
                         'title' => $article2->getTitle(),
                         'summary' => $article2->getSummary(),
                         'url' => (string) $article2->getUrl(),
+                        'source' => [
+                            'id' => (string) $article2->getSource()->getId(),
+                            'name' => $article2->getSource()->getName(),
+                        ],
+                        'updated' => $article2->getUpdated()->format('Y-m-d H:i:s'),
                     ],
                 ],
             ],
