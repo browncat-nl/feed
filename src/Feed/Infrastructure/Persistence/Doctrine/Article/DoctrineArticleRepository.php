@@ -8,6 +8,7 @@ use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Webmozart\Assert\Assert;
 
 /**
  * @template-extends DoctrineRepository<Article>
@@ -29,14 +30,29 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
         return $this->findWithoutLocking($id);
     }
 
+    public function count(): int
+    {
+        $count = $this->createQueryBuilder('a')
+            ->select('count(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        Assert::integer($count);
+
+        return $count;
+    }
+
     /**
      * @param int $numberOfArticles
      * @return List<Article>
      */
-    public function findLatest(int $numberOfArticles): array
-    {
+    public function findLatest(
+        int $offset,
+        int $numberOfArticles,
+    ): array {
         return $this->createQueryBuilder('a')
             ->orderBy('a.updated', Criteria::DESC)
+            ->setFirstResult($offset)
             ->setMaxResults($numberOfArticles)
             ->getQuery()
             ->getResult()

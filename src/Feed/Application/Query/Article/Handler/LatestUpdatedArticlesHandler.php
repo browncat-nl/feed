@@ -18,6 +18,6 @@ final readonly class LatestUpdatedArticlesHandler
      */
     public function __invoke(LatestUpdatedArticlesQuery $query): array
     {
-        return $this->articleRepository->findLatest($query->numberOfArticles);
+        return $this->articleRepository->findLatest($query->offset, $query->numberOfArticles);
     }
 }

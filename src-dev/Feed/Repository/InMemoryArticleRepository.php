@@ -26,13 +26,18 @@ final class InMemoryArticleRepository implements ArticleRepository
         return $this->entities[(string) $id] ?? null;
     }
 
-    public function findLatest(int $numberOfArticles): array
+    public function count(): int
+    {
+        return count($this->entities);
+    }
+
+    public function findLatest(int $offset, int $numberOfArticles): array
     {
         $entities = $this->entities;
 
         usort($entities, fn (Article $a, Article $b) => $a->getUpdated() > $b->getUpdated() ? -1 : 1);
 
-        return array_values(array_slice($entities, 0, $numberOfArticles));
+        return array_values(array_slice($entities, $offset, $numberOfArticles));
     }
 
     public function findByUrl(string $url): ?Article

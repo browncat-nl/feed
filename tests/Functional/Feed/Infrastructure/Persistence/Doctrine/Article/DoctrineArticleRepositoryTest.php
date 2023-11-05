@@ -37,7 +37,7 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
         $this->getDoctrine()->resetManager();
 
         // Act
-        $articles = $this->repository->findLatest(2);
+        $articles = $this->repository->findLatest(0, 2);
 
         // Assert
         self::assertCount(2, $articles);
@@ -78,5 +78,28 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
 
         // Assert
         self::assertNull($foundArticle);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_count_the_articles(): void
+    {
+        // Arrange
+        $source = (new SourceFactory())->create();
+        $this->getDoctrine()->getManager()->persist($source);
+
+        $article1 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:10:00'))->create();
+        $article2 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
+        $article3 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:00:00'))->create();
+
+        $this->repository->save($article1, $article2, $article3);
+        $this->getDoctrine()->resetManager();
+
+        // Act
+        $count = $this->repository->count();
+
+        // Assert
+        self::assertSame(3, $count);
     }
 }
