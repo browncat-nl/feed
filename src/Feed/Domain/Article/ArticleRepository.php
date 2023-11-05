@@ -10,11 +10,16 @@ interface ArticleRepository
 
     public function find(ArticleId $id): ?Article;
 
+    public function count(): int;
+
     /**
      * @param int $numberOfArticles
      * @return list<Article>
      */
-    public function findLatest(int $numberOfArticles): array;
+    public function findLatest(
+        int $offset,
+        int $numberOfArticles,
+    ): array;
 
     public function findByUrl(string $url): ?Article;
 }

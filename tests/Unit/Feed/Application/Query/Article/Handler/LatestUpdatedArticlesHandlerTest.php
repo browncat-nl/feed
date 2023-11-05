@@ -38,7 +38,7 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
 
         $this->articleRepository->save($article1, $article2, $article3, $article4, $article5, $article6);
 
-        $query = new LatestUpdatedArticlesQuery(3);
+        $query = new LatestUpdatedArticlesQuery(0, 3);
 
         // Act
         $articles = $this->handler->__invoke($query);
@@ -54,10 +54,38 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
     /**
      * @test
      */
+    public function it_should_return_results_after_given_offset(): void
+    {
+        // Arrange
+        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+        $article2 = (new ArticleFactory())->withUpdated(new DateTime('1999-05-20 8:00'))->create();
+        $article3 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article4 = (new ArticleFactory())->withUpdated(new DateTime('1998-05-20 8:00'))->create();
+        $article5 = (new ArticleFactory())->withUpdated(new DateTime('2000-06-20 8:00'))->create();
+        $article6 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 7:59'))->create();
+
+        $this->articleRepository->save($article1, $article2, $article3, $article4, $article5, $article6);
+
+        $query = new LatestUpdatedArticlesQuery(3, 3);
+
+        // Act
+        $articles = $this->handler->__invoke($query);
+
+        // Assert
+        self::assertCount(3, $articles);
+
+        self::assertSame($articles[0], $article6);
+        self::assertSame($articles[1], $article2);
+        self::assertSame($articles[2], $article4);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_return_empty_array_when_there_are_no_articles(): void
     {
         // Arrange
-        $query = new LatestUpdatedArticlesQuery(10);
+        $query = new LatestUpdatedArticlesQuery(0, 10);
 
         // Act
         $articles = $this->handler->__invoke($query);
@@ -78,7 +106,7 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
 
         $this->articleRepository->save($article1, $article2, $article3);
 
-        $query = new LatestUpdatedArticlesQuery(100);
+        $query = new LatestUpdatedArticlesQuery(0, 100);
 
         // Act
         $articles = $this->handler->__invoke($query);
