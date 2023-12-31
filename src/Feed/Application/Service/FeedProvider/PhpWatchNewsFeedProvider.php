@@ -20,7 +20,7 @@ final class PhpWatchNewsFeedProvider implements FeedProvider
 
     public static function getSource(): string
     {
-        return 'php.watch';
+        return 'php.watch-news';
     }
 
     public function fetchFeedItems(): array
