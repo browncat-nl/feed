@@ -83,13 +83,13 @@ XML;
         self::assertSame("The first release candidate (RC1) for PHP 8.3 is now released, along with Windows QA builds and Docker images.", $feedItems[0]->summary);
         self::assertSame("https://php.watch/news/2023/08/php83-rc1-released", $feedItems[0]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-08-31 10:44'), $feedItems[0]->updated);
-        self::assertSame('php.watch', $feedItems[0]->source);
+        self::assertSame('php.watch-news', $feedItems[0]->source);
 
         self::assertSame("PHP 8.3 Beta Released", $feedItems[1]->title);
         self::assertSame("The first beta release of the upcoming PHP 8.3 is released.", $feedItems[1]->summary);
         self::assertSame("https://php.watch/news/2023/07/php83-beta-released", $feedItems[1]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-07-24 10:44'), $feedItems[1]->updated);
-        self::assertSame('php.watch', $feedItems[1]->source);
+        self::assertSame('php.watch-news', $feedItems[1]->source);
     }
 
     /**
@@ -98,7 +98,7 @@ XML;
     public function it_should_get_the_source_name(): void
     {
         // Assert
-        self::assertSame('php.watch', PhpWatchChangesFeedProvider::getSource());
+        self::assertSame('php.watch-news', PhpWatchNewsFeedProvider::getSource());
     }
 
     /**

@@ -103,19 +103,19 @@ XML;
         self::assertSame("Change type: Change    Target version: 8.4 ", $feedItems[0]->summary);
         self::assertSame("https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase", $feedItems[0]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-10-17 10:44'), $feedItems[0]->updated);
-        self::assertSame('php.watch', $feedItems[0]->source);
+        self::assertSame('php.watch-changes', $feedItems[0]->source);
 
         self::assertSame("phpinfo: Show PHP Integer Size information", $feedItems[1]->title);
         self::assertSame("Change type: New Feature    Target version: 8.4 ", $feedItems[1]->summary);
         self::assertSame("https://php.watch/versions/8.4/phpinfo-int-size", $feedItems[1]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-09-23 10:44'), $feedItems[1]->updated);
-        self::assertSame('php.watch', $feedItems[1]->source);
+        self::assertSame('php.watch-changes', $feedItems[1]->source);
 
         self::assertSame("Class constant type declarations in some PHP extension classes", $feedItems[2]->title);
         self::assertSame("Change type: Change    Target version: 8.3 ", $feedItems[2]->summary);
         self::assertSame("https://php.watch/versions/8.3/ext-class-constant-type-declarations", $feedItems[2]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-08-22 10:44'), $feedItems[2]->updated);
-        self::assertSame('php.watch', $feedItems[2]->source);
+        self::assertSame('php.watch-changes', $feedItems[2]->source);
     }
 
     /**
@@ -124,7 +124,7 @@ XML;
     public function it_should_get_the_source_name(): void
     {
         // Assert
-        self::assertSame('php.watch', PhpWatchChangesFeedProvider::getSource());
+        self::assertSame('php.watch-changes', PhpWatchChangesFeedProvider::getSource());
     }
 
     /**
