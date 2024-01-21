@@ -3,7 +3,10 @@
 namespace App\Feed\Application\Command\Article\Handler;
 
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
+use App\Common\Infrastructure\Messenger\EventBus\EventBus;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
+use App\Feed\Application\Event\Article\ArticleAddedEvent;
+use App\Feed\Application\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
@@ -26,6 +29,7 @@ final readonly class UpsertArticleHandler
         private ArticleRepository $articleRepository,
         private SourceRepository $sourceRepository,
         private LoggerInterface $logger,
+        private EventBus $eventBus,
     ) {
     }
 
@@ -52,6 +56,9 @@ final readonly class UpsertArticleHandler
             );
 
             $this->articleRepository->save($article);
+
+            $this->eventBus->dispatch(new ArticleAddedEvent($article->getId()));
+
             return;
         }
 
@@ -77,5 +84,7 @@ final readonly class UpsertArticleHandler
         $existingArticle->setSource($source);
 
         $this->articleRepository->save($existingArticle);
+
+        $this->eventBus->dispatch(new ArticleUpdatedEvent($existingArticle->getId()));
     }
 }
