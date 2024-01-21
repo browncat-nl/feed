@@ -47,7 +47,6 @@ final class UpsertArticleHandlerTest extends TestCase
     {
         // Arrange
         $source = (new SourceFactory())->create();
-        $articleId = Uuid::uuid4();
 
         $this->sourceRepository->save($source);
 
