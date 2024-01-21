@@ -4,6 +4,8 @@ namespace Unit\Feed\Application\Command\Article\Handler;
 
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Command\Article\Handler\UpsertArticleHandler;
+use App\Feed\Application\Event\Article\ArticleAddedEvent;
+use App\Feed\Application\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
 use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
@@ -11,6 +13,7 @@ use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\SourceId;
 use DateTime;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
+use Dev\Common\Infrastructure\Messenger\EventBus\RecordingEventBus;
 use Dev\Feed\Factory\ArticleFactory;
 use Dev\Feed\Factory\SourceFactory;
 use Dev\Feed\Repository\InMemoryArticleRepository;
@@ -26,17 +29,20 @@ final class UpsertArticleHandlerTest extends TestCase
     private InMemorySourceRepository $sourceRepository;
 
     private InMemoryLogger $logger;
+    private RecordingEventBus $eventBus;
 
     public function setUp(): void
     {
         $this->articleRepository = new InMemoryArticleRepository();
         $this->sourceRepository = new InMemorySourceRepository();
         $this->logger = new InMemoryLogger();
+        $this->eventBus = new RecordingEventBus();
 
         $this->handler = new UpsertArticleHandler(
             $this->articleRepository,
             $this->sourceRepository,
             $this->logger,
+            $this->eventBus,
         );
     }
 
@@ -76,6 +82,10 @@ final class UpsertArticleHandlerTest extends TestCase
         self::assertSame($url, (string) $article->getUrl());
         self::assertSame($updated, $article->getUpdated());
         self::assertSame($source, $article->getSource());
+
+        $event = $this->eventBus->shiftEvent();
+        self::assertInstanceOf(ArticleAddedEvent::class, $event);
+        self::assertSame((string) $article->getId(), $event->articleId);
     }
 
     /**
@@ -114,6 +124,10 @@ final class UpsertArticleHandlerTest extends TestCase
         self::assertEquals($existingArticle->getUrl(), $article->getUrl());
         self::assertSame($updated, $article->getUpdated());
         self::assertSame($source, $article->getSource());
+
+        $event = $this->eventBus->shiftEvent();
+        self::assertInstanceOf(ArticleUpdatedEvent::class, $event);
+        self::assertSame((string) $article->getId(), $event->articleId);
     }
 
     /**
@@ -157,6 +171,8 @@ final class UpsertArticleHandlerTest extends TestCase
         $log = $this->logger->recordedLogs[0];
 
         self::assertSame(LogLevel::WARNING, $log->level);
+
+        self::assertTrue($this->eventBus->isEmpty());
     }
 
     /**
