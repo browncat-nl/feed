@@ -64,7 +64,7 @@ class RecordingCache implements CacheInterface
         return isset($this->cacheHits[$key]);
     }
 
-    public function cacheIsDeletedForKey(string $key) : bool
+    public function cacheIsDeletedForKey(string $key): bool
     {
         return isset($this->deletes[$key]) && $this->deletes[$key];
     }
