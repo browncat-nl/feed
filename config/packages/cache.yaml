@@ -1,2 +1,8 @@
 framework:
     cache:
+        app: cache.adapter.filesystem
+
+when@test:
+    framework:
+        cache:
+            app: cache.adapter.array
