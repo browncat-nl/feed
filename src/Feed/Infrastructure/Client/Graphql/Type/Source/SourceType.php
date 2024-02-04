@@ -2,6 +2,7 @@
 
 namespace App\Feed\Infrastructure\Client\Graphql\Type\Source;
 
+use App\Feed\Application\Model\Source\SourceReadModel;
 use App\Feed\Domain\Source\Source;
 use Overblog\GraphQLBundle\Annotation as GraphQL;
 
@@ -16,11 +17,11 @@ final readonly class SourceType
     ) {
     }
 
-    public static function createFromSource(Source $source): self
+    public static function createFromSourceReadModel(SourceReadModel $source): self
     {
         return new self(
-            $source->getId(),
-            $source->getName(),
+            $source->id,
+            $source->name,
         );
     }
 }
