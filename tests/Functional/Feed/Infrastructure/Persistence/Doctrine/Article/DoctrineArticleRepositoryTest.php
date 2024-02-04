@@ -39,13 +39,13 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
         $this->getDoctrine()->resetManager();
 
         // Act
-        $articles = $this->repository->findLatest(0, 2);
+        $articles = $this->repository->findLatestIds(0, 2);
 
         // Assert
         self::assertCount(2, $articles);
 
-        self::assertEquals($article1->getId(), $articles[0]->getId());
-        self::assertEquals($article3->getId(), $articles[1]->getId());
+        self::assertEquals($article1->getId(), $articles[0]);
+        self::assertEquals($article3->getId(), $articles[1]);
     }
 
     /**

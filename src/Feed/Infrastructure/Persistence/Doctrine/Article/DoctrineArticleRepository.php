@@ -50,19 +50,22 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
 
     /**
      * @param int $numberOfArticles
-     * @return List<Article>
+     * @return List<ArticleId>
      */
-    public function findLatest(
+    public function findLatestIds(
         int $offset,
         int $numberOfArticles,
     ): array {
-        return $this->createQueryBuilder('a')
-            ->orderBy('a.updated', Criteria::DESC)
-            ->setFirstResult($offset)
-            ->setMaxResults($numberOfArticles)
-            ->getQuery()
-            ->getResult()
-        ;
+         return array_map(
+             fn($id) => new ArticleId($id),
+             $this->createQueryBuilder('a')
+                ->select('a.id')
+                ->orderBy('a.updated', Criteria::DESC)
+                ->setFirstResult($offset)
+                ->setMaxResults($numberOfArticles)
+                ->getQuery()
+                ->getSingleColumnResult()
+         );
     }
 
     public function findByUrl(string $url): ?Article

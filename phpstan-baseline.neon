@@ -16,7 +16,7 @@ parameters:
 			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
 
 		-
-			message: "#^Method App\\\\Feed\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\Article\\\\DoctrineArticleRepository\\:\\:findLatest\\(\\) should return array\\<int, App\\\\Feed\\\\Domain\\\\Article\\\\Article\\> but returns mixed\\.$#"
+			message: "#^Parameter \\#1 \\$id of class App\\\\Feed\\\\Domain\\\\Article\\\\ArticleId constructor expects string, mixed given\\.$#"
 			count: 1
 			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
 
