@@ -38,7 +38,7 @@ class GetLatestArticlesQuery
             $articleTypes = [];
 
             foreach ($articles as $article) {
-                $articleTypes[] = ArticleType::createFromArticle($article);
+                $articleTypes[] = ArticleType::createFromArticleReadModel($article);
             }
 
             return $articleTypes;

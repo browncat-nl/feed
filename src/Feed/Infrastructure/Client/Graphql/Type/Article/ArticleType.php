@@ -3,9 +3,9 @@
 namespace App\Feed\Infrastructure\Client\Graphql\Type\Article;
 
 use App\Common\Infrastructure\Client\Graphql\Scalar\DateTimeType;
-use App\Feed\Domain\Article\Article;
+use App\Feed\Application\Model\Article\ArticleReadModel;
 use App\Feed\Infrastructure\Client\Graphql\Type\Source\SourceType;
-use DateTime;
+use DateTimeImmutable;
 use Overblog\GraphQLBundle\Annotation as GraphQL;
 
 #[GraphQL\Type(name: 'Article')]
@@ -21,18 +21,18 @@ final class ArticleType
         #[GraphQL\Field]
         public SourceType $source,
         #[GraphQl\Field(type: "DateTime")]
-        public DateTime $updated,
+        public DateTimeImmutable $updated,
     ) {
     }
 
-    public static function createFromArticle(Article $article): self
+    public static function createFromArticleReadModel(ArticleReadModel $article): self
     {
         return new self(
-            $article->getTitle(),
-            $article->getSummary(),
-            (string) $article->getUrl(),
-            SourceType::createFromSource($article->getSource()),
-            $article->getUpdated(),
+            $article->title,
+            $article->summary,
+            $article->url,
+            SourceType::createFromSourceReadModel($article->source),
+            $article->updated,
         );
     }
 }

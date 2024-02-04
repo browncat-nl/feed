@@ -2,6 +2,7 @@
 
 namespace Unit\Feed\Application\Query\Article\Handler;
 
+use App\Feed\Application\Model\Article\ArticleReadModel;
 use App\Feed\Application\Query\Article\Handler\LatestUpdatedArticlesHandler;
 use App\Feed\Application\Query\Article\LatestUpdatedArticlesQuery;
 use App\Feed\Domain\Article\ArticleRepository;
@@ -46,9 +47,9 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
         // Assert
         self::assertCount(3, $articles);
 
-        self::assertSame($articles[0], $article5);
-        self::assertSame($articles[1], $article3);
-        self::assertSame($articles[2], $article1);
+        self::assertEquals($articles[0], ArticleReadModel::fromArticle($article5));
+        self::assertEquals($articles[1], ArticleReadModel::fromArticle($article3));
+        self::assertEquals($articles[2], ArticleReadModel::fromArticle($article1));
     }
 
     /**
@@ -74,9 +75,9 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
         // Assert
         self::assertCount(3, $articles);
 
-        self::assertSame($articles[0], $article6);
-        self::assertSame($articles[1], $article2);
-        self::assertSame($articles[2], $article4);
+        self::assertEquals($articles[0], ArticleReadModel::fromArticle($article6));
+        self::assertEquals($articles[1], ArticleReadModel::fromArticle($article2));
+        self::assertEquals($articles[2], ArticleReadModel::fromArticle($article4));
     }
 
     /**
@@ -114,8 +115,8 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
         // Assert
         self::assertCount(3, $articles);
 
-        self::assertSame($articles[0], $article3);
-        self::assertSame($articles[1], $article1);
-        self::assertSame($articles[2], $article2);
+        self::assertEquals($articles[0], ArticleReadModel::fromArticle($article3));
+        self::assertEquals($articles[1], ArticleReadModel::fromArticle($article1));
+        self::assertEquals($articles[2], ArticleReadModel::fromArticle($article2));
     }
 }
