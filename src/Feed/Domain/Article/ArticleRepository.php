@@ -20,9 +20,9 @@ interface ArticleRepository
 
     /**
      * @param int $numberOfArticles
-     * @return list<Article>
+     * @return list<ArticleId>
      */
-    public function findLatest(
+    public function findLatestIds(
         int $offset,
         int $numberOfArticles,
     ): array;

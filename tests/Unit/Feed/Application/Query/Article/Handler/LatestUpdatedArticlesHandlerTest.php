@@ -6,10 +6,13 @@ use App\Feed\Application\Model\Article\ArticleReadModel;
 use App\Feed\Application\Query\Article\Handler\LatestUpdatedArticlesHandler;
 use App\Feed\Application\Query\Article\LatestUpdatedArticlesQuery;
 use App\Feed\Domain\Article\ArticleRepository;
+use App\Feed\Infrastructure\Cache\FeedCacheKeys;
 use DateTime;
+use Dev\Common\Infrastructure\Cache\RecordingCache;
 use Dev\Feed\Factory\ArticleFactory;
 use Dev\Feed\Repository\InMemoryArticleRepository;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 final class LatestUpdatedArticlesHandlerTest extends TestCase
 {
@@ -17,11 +20,14 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
 
     private ArticleRepository $articleRepository;
 
+    private RecordingCache $cache;
+
     public function setUp(): void
     {
         $this->articleRepository = new InMemoryArticleRepository();
+        $this->cache = new RecordingCache(new ArrayAdapter());
 
-        $this->handler = new LatestUpdatedArticlesHandler($this->articleRepository);
+        $this->handler = new LatestUpdatedArticlesHandler($this->articleRepository, $this->cache);
     }
 
     /**
@@ -118,5 +124,40 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
         self::assertEquals($articles[0], ArticleReadModel::fromArticle($article3));
         self::assertEquals($articles[1], ArticleReadModel::fromArticle($article1));
         self::assertEquals($articles[2], ArticleReadModel::fromArticle($article2));
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_results_from_cache(): void
+    {
+        // Arrange
+        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article2 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+
+        $this->articleRepository->save($article1, $article2);
+
+        $this->cache->get(
+            sprintf(FeedCacheKeys::ARTICLE_WITH_ARTICLE_ID->value, $article2->getId()),
+            fn() => ArticleReadModel::fromArticle($article2),
+        );
+
+        $query = new LatestUpdatedArticlesQuery(0, 2);
+
+        // Act
+        $articles = $this->handler->__invoke($query);
+
+        // Assert
+        self::assertCount(2, $articles);
+
+        self::assertFalse($this->cache->cacheIsHitForKey(
+            sprintf(FeedCacheKeys::ARTICLE_WITH_ARTICLE_ID->value, $article1->getId())
+        ));
+        self::assertTrue($this->cache->cacheIsHitForKey(
+            sprintf(FeedCacheKeys::ARTICLE_WITH_ARTICLE_ID->value, $article2->getId())
+        ));
+
+        self::assertEquals($articles[0], ArticleReadModel::fromArticle($article1));
+        self::assertEquals($articles[1], ArticleReadModel::fromArticle($article2));
     }
 }
