@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Method Dev\\\\Common\\\\Infrastructure\\\\Cache\\\\RecordingCache\\:\\:get\\(\\) has parameter \\$metadata with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src-dev/Common/Infrastructure/Cache/RecordingCache.php
+
+		-
 			message: "#^Property App\\\\Common\\\\Infrastructure\\\\Persistence\\\\Doctrine\\\\DoctrineRepository\\<T of object\\>\\:\\:\\$entityName \\(class\\-string\\<T of object\\>\\) does not accept class\\-string\\<object\\>\\.$#"
 			count: 1
 			path: src/Common/Infrastructure/Persistence/Doctrine/DoctrineRepository.php
