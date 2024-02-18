@@ -6,6 +6,7 @@ use App\Common\Infrastructure\Persistence\Doctrine\DoctrineRepository;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
+use App\Feed\Domain\Article\Exception\ArticleNotFoundException;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Webmozart\Assert\Assert;
@@ -28,6 +29,11 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
     public function find(ArticleId $id): ?Article
     {
         return $this->findWithoutLocking($id);
+    }
+
+    public function findOrThrow(ArticleId $id): Article
+    {
+        return $this->find($id) ?? throw ArticleNotFoundException::withArticleId($id);
     }
 
     public function count(): int

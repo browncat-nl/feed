@@ -2,6 +2,8 @@
 
 namespace Functional\Feed\Infrastructure\Persistence\Doctrine\Article;
 
+use App\Feed\Domain\Article\ArticleId;
+use App\Feed\Domain\Article\Exception\ArticleNotFoundException;
 use App\Feed\Infrastructure\Persistence\Doctrine\Article\DoctrineArticleRepository;
 use DateTime;
 use Dev\Feed\Factory\ArticleFactory;
@@ -101,5 +103,17 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
 
         // Assert
         self::assertSame(3, $count);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_throw_when_trying_to_find_a_non_existing_article_id(): void
+    {
+        // Assert
+        self::expectException(ArticleNotFoundException::class);
+
+        // Act
+        $this->repository->findOrThrow(new ArticleId('ddb01803-ef13-4195-bed1-3320a6b443ba'));
     }
 }
