@@ -5,6 +5,7 @@ namespace Dev\Feed\Repository;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
+use App\Feed\Domain\Article\Exception\ArticleNotFoundException;
 use App\Feed\Domain\Article\Url\Url;
 
 final class InMemoryArticleRepository implements ArticleRepository
@@ -24,6 +25,12 @@ final class InMemoryArticleRepository implements ArticleRepository
     public function find(ArticleId $id): ?Article
     {
         return $this->entities[(string) $id] ?? null;
+    }
+
+
+    public function findOrThrow(ArticleId $id): Article
+    {
+        return $this->find($id) ?? throw ArticleNotFoundException::withArticleId($id);
     }
 
     public function count(): int
