@@ -19,7 +19,7 @@ class SymfonyMessengerEventBus implements EventBus
         try {
             $this->eventBus->dispatch($event);
         } catch (HandlerFailedException $handlerFailedException) {
-            $exceptions = $handlerFailedException->getNestedExceptions();
+            $exceptions = $handlerFailedException->getWrappedExceptions();
 
             $firstException = reset($exceptions);
 

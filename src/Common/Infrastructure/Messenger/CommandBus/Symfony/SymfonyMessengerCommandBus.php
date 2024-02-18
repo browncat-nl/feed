@@ -19,7 +19,7 @@ class SymfonyMessengerCommandBus implements CommandBus
         try {
             $this->messageBus->dispatch($command);
         } catch (HandlerFailedException $handlerFailedException) {
-            $exceptions = $handlerFailedException->getNestedExceptions();
+            $exceptions = $handlerFailedException->getWrappedExceptions();
 
             $firstException = reset($exceptions);
 
