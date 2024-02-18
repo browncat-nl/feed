@@ -2,14 +2,20 @@ name: CI
 
 on: [push]
 
+env:
+  PHP_VERSION: '8.3'
+
 jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
+        with:
+          php_version: ${{ env.PHP_VERSION }}
       - uses: shivammathur/setup-php@v2
         with:
+          php-version: ${{ env.PHP_VERSION }}
           tools: cs2pr, phpcs
       - run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
 
@@ -18,8 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
+        with:
+          php_version: ${{ env.PHP_VERSION }}
       - uses: php-actions/phpstan@v3
         with:
+          php_version: ${{ env.PHP_VERSION }}
           configuration: "phpstan.neon"
 
   unit_tests:
@@ -27,8 +36,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
+        with:
+          php_version: ${{ env.PHP_VERSION }}
       - uses: php-actions/phpunit@v3
         with:
+          php_version: ${{ env.PHP_VERSION }}
           configuration: "phpunit.xml.dist"
           version: "9.5"
           args: tests/Unit
@@ -53,7 +65,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ env.PHP_VERSION }}
           extensions: pdo_pgsql
       - run: composer install
       - run: php bin/console doctrine:schema:create --env=test
