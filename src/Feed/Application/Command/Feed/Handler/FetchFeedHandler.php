@@ -11,7 +11,7 @@ use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 
 final readonly class FetchFeedHandler
@@ -20,7 +20,7 @@ final readonly class FetchFeedHandler
      * @param ServiceProviderInterface<FeedProvider> $feedProviders
      */
     public function __construct(
-        #[TaggedLocator(FeedProvider::class, defaultIndexMethod: 'getSource')]
+        #[AutowireLocator(FeedProvider::class, defaultIndexMethod: 'getSource')]
         private ServiceProviderInterface $feedProviders,
         private EventBus $eventBus,
     ) {
