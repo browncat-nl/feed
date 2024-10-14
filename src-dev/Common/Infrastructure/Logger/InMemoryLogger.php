@@ -2,7 +2,6 @@
 
 namespace Dev\Common\Infrastructure\Logger;
 
-use _PHPStan_dcc7b7cff\React\Dns\Model\Record;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
