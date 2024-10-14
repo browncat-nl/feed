@@ -29,8 +29,8 @@ class GetLatestArticlesQuery
         name: 'getLatestArticles',
         type: 'ArticleConnection',
     )]
-    #[GraphQL\Arg(name: 'first', type: 'Int', default: 30)]
-    #[GraphQL\Arg(name: 'after', type: 'String', default: null)]
+    #[GraphQL\Arg(name: 'first', type: 'Int', defaultValue: 30)]
+    #[GraphQL\Arg(name: 'after', type: 'String', defaultValue: null)]
     public function __invoke(int $first, ?string $after): Connection|Promise
     {
         $paginator = new Paginator(function ($offset, $limit) {
