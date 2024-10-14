@@ -7,6 +7,9 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 
+/**
+ * @extends Connection<ArticleType>
+ */
 #[GraphQL\Relay\Connection(node: 'Article')]
 final class ArticleConnection extends Connection
 {
