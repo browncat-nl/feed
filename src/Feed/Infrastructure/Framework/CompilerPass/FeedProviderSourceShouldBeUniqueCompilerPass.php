@@ -23,7 +23,7 @@ final class FeedProviderSourceShouldBeUniqueCompilerPass implements CompilerPass
                 throw new \Exception('%s must implement static method `getSource`.');
             }
 
-            $source = call_user_func([$service, 'getSource']);
+            $source = $service::getSource();
 
             if (in_array($source, $sources)) {
                 throw new \Exception(sprintf(

@@ -56,7 +56,7 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
         int $offset,
         int $numberOfArticles,
     ): array {
-         return array_map(
+         return array_values(array_map(
              fn($id) => new ArticleId($id),
              $this->createQueryBuilder('a')
                 ->select('a.id')
@@ -65,7 +65,7 @@ final readonly class DoctrineArticleRepository extends DoctrineRepository implem
                 ->setMaxResults($numberOfArticles)
                 ->getQuery()
                 ->getSingleColumnResult()
-         );
+         ));
     }
 
     public function findByUrl(string $url): ?Article

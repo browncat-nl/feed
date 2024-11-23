@@ -46,7 +46,7 @@ final class InMemoryArticleRepository implements ArticleRepository
 
         return array_map(
             fn(Article $entity) => $entity->getId(),
-            array_values(array_slice($entities, $offset, $numberOfArticles))
+            array_slice($entities, $offset, $numberOfArticles)
         );
     }
 
