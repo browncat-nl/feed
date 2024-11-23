@@ -21,7 +21,6 @@ abstract class GraphqlTestCase extends WebTestCase
         $this->client = $this->createClient();
         $this->client->disableReboot();
 
-        $this->getDoctrine()->getConnection()->setNestTransactionsWithSavepoints(true);
         $this->getDoctrine()->getConnection()->setAutoCommit(false);
         $this->getDoctrine()->beginTransaction();
     }
