@@ -48,7 +48,6 @@ abstract class DoctrineTestCase extends KernelTestCase
 
         $this->doctrine = $doctrine;
 
-        $this->getEntityManager()->getConnection()->setNestTransactionsWithSavepoints(true);
         $this->getEntityManager()->getConnection()->setAutoCommit(false);
         $this->getEntityManager()->beginTransaction();
     }
