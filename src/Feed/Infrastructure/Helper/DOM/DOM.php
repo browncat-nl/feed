@@ -12,7 +12,7 @@ final readonly class DOM
 {
     public static function getString(DOMElement $element, string $key): string
     {
-        return $element->getElementsByTagName($key)->item(0)?->firstChild?->nodeValue
+        return $element->getElementsByTagName($key)->item(0)?->firstChild->nodeValue
             ?? throw new OutOfBoundsException(sprintf('`%s` does not exist in DOMElement', $key));
     }
 
