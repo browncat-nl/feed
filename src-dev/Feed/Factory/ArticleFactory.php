@@ -18,7 +18,7 @@ final class ArticleFactory
     private DateTime $updated;
     private Source $source;
 
-    public function __construct()
+    private function __construct()
     {
         $faker = \Faker\Factory::create();
 
@@ -27,7 +27,12 @@ final class ArticleFactory
         $this->summary = $faker->paragraph();
         $this->url = Url::createFromString($faker->url());
         $this->updated = $faker->dateTime();
-        $this->source = (new SourceFactory())->create();
+        $this->source = SourceFactory::setup()->create();
+    }
+
+    public static function setup(): self
+    {
+        return new self();
     }
 
     public function withSource(Source $source): self

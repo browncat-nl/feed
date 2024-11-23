@@ -27,13 +27,13 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
     public function it_should_return_the_latest_articles_in_a_sorted_manner(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
         $this->getDoctrine()->getManager()->persist($source);
 
-        $article1 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:10:00'))->create();
-        $article2 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
-        $article3 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:00:00'))->create();
-        $article4 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
+        $article1 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2021-03-10 00:10:00'))->create();
+        $article2 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
+        $article3 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2021-03-10 00:00:00'))->create();
+        $article4 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
 
         $this->repository->save($article1, $article2, $article3, $article4);
         $this->getDoctrine()->resetManager();
@@ -54,10 +54,10 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
     public function it_should_find_the_article_by_its_url(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
         $this->getDoctrine()->getManager()->persist($source);
 
-        $article = (new ArticleFactory())->withSource($source)->create();
+        $article = ArticleFactory::setup()->withSource($source)->create();
 
         $this->repository->save($article);
         $this->getDoctrine()->resetManager();
@@ -88,12 +88,12 @@ class DoctrineArticleRepositoryTest extends DoctrineTestCase
     public function it_should_count_the_articles(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
         $this->getDoctrine()->getManager()->persist($source);
 
-        $article1 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:10:00'))->create();
-        $article2 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
-        $article3 = (new ArticleFactory())->withSource($source)->withUpdated(new DateTime('2021-03-10 00:00:00'))->create();
+        $article1 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2021-03-10 00:10:00'))->create();
+        $article2 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2020-03-10 00:00:00'))->create();
+        $article3 = ArticleFactory::setup()->withSource($source)->withUpdated(new DateTime('2021-03-10 00:00:00'))->create();
 
         $this->repository->save($article1, $article2, $article3);
         $this->getDoctrine()->resetManager();

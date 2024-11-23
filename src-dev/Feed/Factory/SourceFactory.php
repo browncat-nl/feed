@@ -19,6 +19,11 @@ class SourceFactory
         $this->name = $faker->company();
     }
 
+    public static function setup(): self
+    {
+        return new self();
+    }
+
     public function withName(string $name): self
     {
         $this->name = $name;

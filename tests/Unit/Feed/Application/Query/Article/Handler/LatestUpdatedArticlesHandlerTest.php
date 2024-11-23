@@ -36,12 +36,12 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
     public function it_should_retrieve_last_n_articles(): void
     {
         // Arrange
-        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
-        $article2 = (new ArticleFactory())->withUpdated(new DateTime('1999-05-20 8:00'))->create();
-        $article3 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
-        $article4 = (new ArticleFactory())->withUpdated(new DateTime('1998-05-20 8:00'))->create();
-        $article5 = (new ArticleFactory())->withUpdated(new DateTime('2000-06-20 8:00'))->create();
-        $article6 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 7:59'))->create();
+        $article1 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+        $article2 = ArticleFactory::setup()->withUpdated(new DateTime('1999-05-20 8:00'))->create();
+        $article3 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article4 = ArticleFactory::setup()->withUpdated(new DateTime('1998-05-20 8:00'))->create();
+        $article5 = ArticleFactory::setup()->withUpdated(new DateTime('2000-06-20 8:00'))->create();
+        $article6 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 7:59'))->create();
 
         $this->articleRepository->save($article1, $article2, $article3, $article4, $article5, $article6);
 
@@ -64,12 +64,12 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
     public function it_should_return_results_after_given_offset(): void
     {
         // Arrange
-        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
-        $article2 = (new ArticleFactory())->withUpdated(new DateTime('1999-05-20 8:00'))->create();
-        $article3 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
-        $article4 = (new ArticleFactory())->withUpdated(new DateTime('1998-05-20 8:00'))->create();
-        $article5 = (new ArticleFactory())->withUpdated(new DateTime('2000-06-20 8:00'))->create();
-        $article6 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 7:59'))->create();
+        $article1 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+        $article2 = ArticleFactory::setup()->withUpdated(new DateTime('1999-05-20 8:00'))->create();
+        $article3 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article4 = ArticleFactory::setup()->withUpdated(new DateTime('1998-05-20 8:00'))->create();
+        $article5 = ArticleFactory::setup()->withUpdated(new DateTime('2000-06-20 8:00'))->create();
+        $article6 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 7:59'))->create();
 
         $this->articleRepository->save($article1, $article2, $article3, $article4, $article5, $article6);
 
@@ -107,9 +107,9 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
     public function it_should_return_subset_if_asked_articles_expands_available(): void
     {
         // Arrange
-        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
-        $article2 = (new ArticleFactory())->withUpdated(new DateTime('1999-05-20 8:00'))->create();
-        $article3 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article1 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+        $article2 = ArticleFactory::setup()->withUpdated(new DateTime('1999-05-20 8:00'))->create();
+        $article3 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:01'))->create();
 
         $this->articleRepository->save($article1, $article2, $article3);
 
@@ -132,8 +132,8 @@ final class LatestUpdatedArticlesHandlerTest extends TestCase
     public function it_should_return_results_from_cache(): void
     {
         // Arrange
-        $article1 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:01'))->create();
-        $article2 = (new ArticleFactory())->withUpdated(new DateTime('2000-05-20 8:00'))->create();
+        $article1 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:01'))->create();
+        $article2 = ArticleFactory::setup()->withUpdated(new DateTime('2000-05-20 8:00'))->create();
 
         $this->articleRepository->save($article1, $article2);
 

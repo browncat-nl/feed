@@ -39,9 +39,9 @@ class CountArticlesHandlerTest extends TestCase
     {
         // Arrange
         $this->repository->save(
-            (new ArticleFactory())->create(),
-            (new ArticleFactory())->create(),
-            (new ArticleFactory())->create(),
+            ArticleFactory::setup()->create(),
+            ArticleFactory::setup()->create(),
+            ArticleFactory::setup()->create(),
         );
 
         // Act
