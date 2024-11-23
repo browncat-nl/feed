@@ -28,7 +28,7 @@ class DoctrineSourceRepositoryTest extends DoctrineTestCase
     public function it_should_find_the_source_by_its_name(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
 
         $this->repository->save($source);
         $this->getDoctrine()->resetManager();

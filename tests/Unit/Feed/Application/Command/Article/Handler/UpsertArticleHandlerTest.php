@@ -52,7 +52,7 @@ final class UpsertArticleHandlerTest extends TestCase
     public function it_should_create_an_article(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
 
         $this->sourceRepository->save($source);
 
@@ -94,8 +94,8 @@ final class UpsertArticleHandlerTest extends TestCase
     public function it_should_update_the_article(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
-        $existingArticle = (new ArticleFactory())->withUpdated(new DateTime('1996-10-27 00:00:00'))->create();
+        $source = SourceFactory::setup()->create();
+        $existingArticle = ArticleFactory::setup()->withUpdated(new DateTime('1996-10-27 00:00:00'))->create();
 
         $this->sourceRepository->save($source);
         $this->articleRepository->save($existingArticle);
@@ -136,8 +136,8 @@ final class UpsertArticleHandlerTest extends TestCase
     public function it_should_do_nothing_if_the_update_is_older_than_the_current_article(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
-        $existingArticle = (new ArticleFactory())->withUpdated(new DateTime('2022-10-5 00:00:00'))->create();
+        $source = SourceFactory::setup()->create();
+        $existingArticle = ArticleFactory::setup()->withUpdated(new DateTime('2022-10-5 00:00:00'))->create();
 
         $this->sourceRepository->save($source);
         $this->articleRepository->save($existingArticle);
@@ -202,7 +202,7 @@ final class UpsertArticleHandlerTest extends TestCase
     public function it_should_throw_if_url_is_malformed(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
         $articleId = Uuid::uuid4();
 
         $this->sourceRepository->save($source);
@@ -230,7 +230,7 @@ final class UpsertArticleHandlerTest extends TestCase
     public function it_should_throw_if_url_scheme_is_not_supported(): void
     {
         // Arrange
-        $source = (new SourceFactory())->create();
+        $source = SourceFactory::setup()->create();
         $articleId = Uuid::uuid4();
 
         $this->sourceRepository->save($source);

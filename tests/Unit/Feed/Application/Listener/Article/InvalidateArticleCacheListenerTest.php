@@ -29,7 +29,7 @@ final class InvalidateArticleCacheListenerTest extends TestCase
     public function it_should_delete_the_cache_entry_when_the_article_is_updated(): void
     {
         // Arrange
-        $article = (new ArticleFactory())->create();
+        $article = ArticleFactory::setup()->create();
         $cacheKey = sprintf(FeedCacheKeys::ARTICLE_WITH_ARTICLE_ID->value, $article->getId());
 
         $this->cache->get(
