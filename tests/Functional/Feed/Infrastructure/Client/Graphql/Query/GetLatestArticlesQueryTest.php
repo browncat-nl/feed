@@ -65,24 +65,10 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
     public function it_should_return_the_latest_articles_paginated(): void
     {
         // Arrange
-        $article = ArticleFactory::setup()->withUpdated(new \DateTime('2023-10-10 8:00:00'))->create();
-        $article2 = ArticleFactory::setup()->withUpdated(new \DateTime('2012-01-5 15:30:00'))->create();
-        $article3 = ArticleFactory::setup()->withUpdated(new \DateTime('2012-01-5 15:30:01'))->create();
-        $article4 = ArticleFactory::setup()->withUpdated(new \DateTime('2012-01-4 15:30:00'))->create();
-
-        $this->getDoctrine()->persist($article->getSource());
-        $this->getDoctrine()->persist($article);
-
-        $this->getDoctrine()->persist($article2->getSource());
-        $this->getDoctrine()->persist($article2);
-
-        $this->getDoctrine()->persist($article3->getSource());
-        $this->getDoctrine()->persist($article3);
-
-        $this->getDoctrine()->persist($article4->getSource());
-        $this->getDoctrine()->persist($article4);
-
-        $this->getDoctrine()->flush();
+        $article = ArticleFactory::setup($this->getDoctrine())->withUpdated(new \DateTime('2023-10-10 8:00:00'))->create();
+        $article2 = ArticleFactory::setup($this->getDoctrine())->withUpdated(new \DateTime('2012-01-5 15:30:00'))->create();
+        $article3 = ArticleFactory::setup($this->getDoctrine())->withUpdated(new \DateTime('2012-01-5 15:30:01'))->create();
+        $article4 = ArticleFactory::setup($this->getDoctrine())->withUpdated(new \DateTime('2012-01-4 15:30:00'))->create();
 
         // Act
         $response = $this->operation(

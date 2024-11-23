@@ -7,6 +7,7 @@ use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Source;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 
 final class ArticleFactory
@@ -18,7 +19,7 @@ final class ArticleFactory
     private DateTime $updated;
     private Source $source;
 
-    private function __construct()
+    private function __construct(private readonly ?EntityManagerInterface $entityManager)
     {
         $faker = \Faker\Factory::create();
 
@@ -30,9 +31,9 @@ final class ArticleFactory
         $this->source = SourceFactory::setup()->create();
     }
 
-    public static function setup(): self
+    public static function setup(?EntityManagerInterface $entityManager = null): self
     {
-        return new self();
+        return new self($entityManager);
     }
 
     public function withSource(Source $source): self
@@ -51,7 +52,7 @@ final class ArticleFactory
 
     public function create(): Article
     {
-        return new Article(
+        $article = new Article(
             $this->id,
             $this->title,
             $this->summary,
@@ -59,5 +60,14 @@ final class ArticleFactory
             $this->updated,
             $this->source,
         );
+
+        if ($this->entityManager == null) {
+            return $article;
+        }
+
+        $this->entityManager->persist($article);
+        $this->entityManager->flush();
+
+        return $article;
     }
 }

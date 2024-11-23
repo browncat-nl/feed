@@ -27,7 +27,7 @@ class Article
     #[ORM\Column(type: 'datetime')]
     private DateTime $updated;
 
-    #[ORM\ManyToOne(targetEntity: Source::class)]
+    #[ORM\ManyToOne(targetEntity: Source::class, cascade: ['persist'])]
     private Source $source;
 
     public function __construct(
