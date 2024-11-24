@@ -3,8 +3,7 @@
 namespace App\Feed\Application\Listener\Article;
 
 use App\Common\Infrastructure\Messenger\EventBus\AsEventSubscriber;
-use App\Feed\Application\Event\Article\ArticleAddedEvent;
-use App\Feed\Domain\Article\ArticleRepository;
+use App\Feed\Domain\Article\Event\Article\ArticleAddedEvent;
 use App\Feed\Infrastructure\Cache\FeedCacheKeys;
 use Symfony\Contracts\Cache\CacheInterface;
 

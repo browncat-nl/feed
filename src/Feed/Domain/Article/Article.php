@@ -2,6 +2,10 @@
 
 namespace App\Feed\Domain\Article;
 
+use App\Common\Domain\EventPublishingAggregateRoot;
+use App\Common\Domain\EventPublishingAggregateRootTrait;
+use App\Feed\Domain\Article\Event\Article\ArticleAddedEvent;
+use App\Feed\Domain\Article\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Source;
 use DateTime;
@@ -10,8 +14,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: 'articles')]
 #[ORM\Index(columns: ['url'], name: 'url_index')]
-class Article
+class Article implements EventPublishingAggregateRoot
 {
+    use EventPublishingAggregateRootTrait;
+
     #[ORM\Id, ORM\Column(type: 'string')]
     private string $id;
 
@@ -44,6 +50,8 @@ class Article
         $this->url = (string) $url;
         $this->updated = $updated;
         $this->source = $source;
+
+        $this->recordEvent(new ArticleAddedEvent($id));
     }
 
     public function getId(): ArticleId
@@ -91,5 +99,7 @@ class Article
         $this->url = $newUrl;
         $this->updated = $newUpdated;
         $this->source = $newSource;
+
+        $this->recordEvent(new ArticleUpdatedEvent($this->id));
     }
 }

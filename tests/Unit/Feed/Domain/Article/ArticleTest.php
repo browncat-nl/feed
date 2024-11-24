@@ -2,6 +2,8 @@
 
 namespace Unit\Feed\Domain\Article;
 
+use App\Feed\Domain\Article\Event\Article\ArticleAddedEvent;
+use App\Feed\Domain\Article\Event\Article\ArticleUpdatedEvent;
 use Dev\Feed\Factory\ArticleFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -32,6 +34,9 @@ class ArticleTest extends TestCase
         self::assertEquals('existing title', $article->getTitle());
         self::assertEquals('existing summary', $article->getSummary());
         self::assertEquals(new \DateTime('2022-03-03 00:00:00'), $article->getUpdated());
+
+        self::assertEquals(new ArticleAddedEvent($article->getId()), $article->shiftDomainEvent());
+        self::assertFalse($article->hasDomainEvents());
     }
 
     /**
@@ -59,6 +64,9 @@ class ArticleTest extends TestCase
         self::assertEquals('existing title', $article->getTitle());
         self::assertEquals('existing summary', $article->getSummary());
         self::assertEquals(new \DateTime('2022-03-03 00:00:00'), $article->getUpdated());
+
+        self::assertEquals(new ArticleAddedEvent($article->getId()), $article->shiftDomainEvent());
+        self::assertFalse($article->hasDomainEvents());
     }
 
     /**
@@ -86,5 +94,9 @@ class ArticleTest extends TestCase
         self::assertEquals('updated title', $article->getTitle());
         self::assertEquals('updated summary', $article->getSummary());
         self::assertEquals(new \DateTime('2024-10-10 10:00:00'), $article->getUpdated());
+
+        self::assertEquals(new ArticleAddedEvent($article->getId()), $article->shiftDomainEvent());
+        self::assertEquals(new ArticleUpdatedEvent($article->getId()), $article->shiftDomainEvent());
+        self::assertFalse($article->hasDomainEvents());
     }
 }
