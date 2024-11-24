@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Feed\Application\Event\Article;
+namespace App\Feed\Domain\Article\Event\Article;
 
 final readonly class ArticleUpdatedEvent
 {

@@ -2,13 +2,12 @@
 
 namespace Unit\Feed\Application\Listener\Article;
 
-use App\Feed\Application\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Application\Listener\Article\InvalidateArticleCacheListener;
+use App\Feed\Domain\Article\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Infrastructure\Cache\FeedCacheKeys;
 use Dev\Feed\Factory\ArticleFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 final class InvalidateArticleCacheListenerTest extends TestCase

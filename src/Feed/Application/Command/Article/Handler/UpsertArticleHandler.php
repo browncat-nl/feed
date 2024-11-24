@@ -3,21 +3,15 @@
 namespace App\Feed\Application\Command\Article\Handler;
 
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
-use App\Common\Infrastructure\Messenger\EventBus\EventBus;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
-use App\Feed\Application\Event\Article\ArticleAddedEvent;
-use App\Feed\Application\Event\Article\ArticleUpdatedEvent;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
 use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
 use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
-use App\Feed\Domain\Source\SourceId;
 use App\Feed\Domain\Source\SourceRepository;
-use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Updates the article if the url is found in the article repository, otherwise it creates a new article.
@@ -28,7 +22,6 @@ final readonly class UpsertArticleHandler
     public function __construct(
         private ArticleRepository $articleRepository,
         private SourceRepository $sourceRepository,
-        private EventBus $eventBus,
     ) {
     }
 
@@ -56,8 +49,6 @@ final readonly class UpsertArticleHandler
 
             $this->articleRepository->save($article);
 
-            $this->eventBus->dispatch(new ArticleAddedEvent($article->getId()));
-
             return;
         }
 
@@ -70,7 +61,5 @@ final readonly class UpsertArticleHandler
         );
 
         $this->articleRepository->save($existingArticle);
-
-        $this->eventBus->dispatch(new ArticleUpdatedEvent($existingArticle->getId()));
     }
 }
