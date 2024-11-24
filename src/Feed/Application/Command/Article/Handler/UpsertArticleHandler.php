@@ -28,7 +28,6 @@ final readonly class UpsertArticleHandler
     public function __construct(
         private ArticleRepository $articleRepository,
         private SourceRepository $sourceRepository,
-        private LoggerInterface $logger,
         private EventBus $eventBus,
     ) {
     }
@@ -62,26 +61,13 @@ final readonly class UpsertArticleHandler
             return;
         }
 
-        if ($existingArticle->getUpdated() === $command->updated) {
-            return;
-        }
-
-        if ($existingArticle->getUpdated() > $command->updated) {
-            $this->logger->warning('Existing article is fresher then the newly given one.', [
-                'articleId' => $existingArticle->getId(),
-                'existingArticleUpdated' => $existingArticle->getUpdated(),
-                'newArticleUpdated' => $existingArticle->getUpdated(),
-                'url' => $command->url,
-            ]);
-
-            return;
-        }
-
-        $existingArticle->setTitle($command->title);
-        $existingArticle->setSummary($command->summary);
-        $existingArticle->setUrl(Url::createFromString($command->url));
-        $existingArticle->setUpdated($command->updated);
-        $existingArticle->setSource($source);
+        $existingArticle->updateArticle(
+            $command->title,
+            $command->summary,
+            Url::createFromString($command->url),
+            $command->updated,
+            $source
+        );
 
         $this->articleRepository->save($existingArticle);
 
