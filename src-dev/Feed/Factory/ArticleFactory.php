@@ -50,6 +50,20 @@ final class ArticleFactory
         return $this;
     }
 
+    public function withTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function withSummary(string $summary): self
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
     public function create(): Article
     {
         $article = new Article(

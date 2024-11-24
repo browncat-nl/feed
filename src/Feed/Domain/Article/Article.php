@@ -56,19 +56,9 @@ class Article
         return $this->title;
     }
 
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
     public function getSummary(): string
     {
         return $this->summary;
-    }
-
-    public function setSummary(string $summary): void
-    {
-        $this->summary = $summary;
     }
 
     public function getUrl(): Url
@@ -76,19 +66,9 @@ class Article
         return Url::createFromString($this->url);
     }
 
-    public function setUrl(string $url): void
-    {
-        $this->url = $url;
-    }
-
     public function getUpdated(): DateTime
     {
         return $this->updated;
-    }
-
-    public function setUpdated(DateTime $updated): void
-    {
-        $this->updated = $updated;
     }
 
     public function getSource(): Source
@@ -96,8 +76,20 @@ class Article
         return $this->source;
     }
 
-    public function setSource(Source $source): void
+    public function updateArticle(string $newTitle, string $newSummary, Url $newUrl, \DateTime $newUpdated, Source $newSource): void
     {
-        $this->source = $source;
+        if ($this->updated == $newUpdated) {
+            return;
+        }
+
+        if ($this->updated > $newUpdated) {
+            return;
+        }
+
+        $this->title = $newTitle;
+        $this->summary = $newSummary;
+        $this->url = $newUrl;
+        $this->updated = $newUpdated;
+        $this->source = $newSource;
     }
 }
