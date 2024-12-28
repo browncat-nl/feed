@@ -1,19 +1,15 @@
 <?php
 
-namespace Unit\Feed\Application\Service\FeedProvider;
+namespace Unit\Feed\Infrastructure\FeedParser\RssParser;
 
-use App\Feed\Application\Service\FeedProvider\PhpWatchChangesFeedProvider;
 use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LogLevel;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class PhpWatchChangesFeedProviderTest extends TestCase
+final class SimplePieFeedParserTest extends TestCase
 {
-    private InMemoryLogger $logger;
-
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">
     <title>PHP.Watch: PHP Version Changes</title>
@@ -55,7 +51,7 @@ final class PhpWatchChangesFeedProviderTest extends TestCase
 </feed>
 XML;
 
-    private const MALFORMED_EXTERNAL_FEED = <<<XML
+    private const EXTERNAL_FEED_WITH_MALFORMED_ENTRY = <<<XML
 <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">
     <title>PHP.Watch: PHP Version Changes</title>
     <id>https://php.watch/versions</id>
@@ -64,38 +60,37 @@ XML;
     <author><name>Ayesh Karunaratne</name></author>
         <subtitle>Recent changes in PHP language.</subtitle>
         <entry>
-            <title>Password Hashing: Default Bcrypt cost changed from `10` to `12`</title>
+            <title>Entry with missing publish date</title>
             <link href="https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase"/>
             <id>https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase</id>
+        </entry>
+        <entry>
+            <title>Class constant type declarations in some PHP extension classes</title>
+            <link href="https://php.watch/versions/8.3/ext-class-constant-type-declarations"/>
+            <id>https://php.watch/versions/8.3/ext-class-constant-type-declarations</id>
+            <updated>2023-08-22T10:44:00+00:00</updated>
             <summary>Change type: Change
 
-		Target version: 8.4
+		Target version: 8.3
 </summary>
         </entry>
 </feed>
 XML;
 
-    protected function setUp(): void
-    {
-        $this->logger = new InMemoryLogger();
-
-        parent::setUp();
-    }
-
     /**
      * @test
      */
-    public function it_should_fetch_the_external_feed(): void
+    public function it_should_fetch_and_parse_the_feed(): void
     {
         // Arrange
         $client = new MockHttpClient([
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedParser = new SimplePieFeedParser($client, new InMemoryLogger());
 
         // Act
-        $feedItems = $feedProvider->fetchFeedItems();
+        $feedItems = $feedParser->fetchFeed('some-source', 'https://example.com/rss');
 
         // Assert
         self::assertCount(3, $feedItems);
@@ -104,58 +99,48 @@ XML;
         self::assertSame("Change type: Change    Target version: 8.4", $feedItems[0]->summary);
         self::assertSame("https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase", $feedItems[0]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-10-17 10:44'), $feedItems[0]->updated);
-        self::assertSame('php.watch-changes', $feedItems[0]->source);
+        self::assertSame('some-source', $feedItems[0]->source);
 
         self::assertSame("phpinfo: Show PHP Integer Size information", $feedItems[1]->title);
         self::assertSame("Change type: New Feature    Target version: 8.4", $feedItems[1]->summary);
         self::assertSame("https://php.watch/versions/8.4/phpinfo-int-size", $feedItems[1]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-09-23 10:44'), $feedItems[1]->updated);
-        self::assertSame('php.watch-changes', $feedItems[1]->source);
+        self::assertSame('some-source', $feedItems[1]->source);
 
         self::assertSame("Class constant type declarations in some PHP extension classes", $feedItems[2]->title);
         self::assertSame("Change type: Change    Target version: 8.3", $feedItems[2]->summary);
         self::assertSame("https://php.watch/versions/8.3/ext-class-constant-type-declarations", $feedItems[2]->url);
         self::assertEquals(\DateTime::createFromFormat('Y-m-d H:i', '2023-08-22 10:44'), $feedItems[2]->updated);
-        self::assertSame('php.watch-changes', $feedItems[2]->source);
+        self::assertSame('some-source', $feedItems[2]->source);
     }
 
     /**
      * @test
      */
-    public function it_should_get_the_source_name(): void
-    {
-        // Assert
-        self::assertSame('php.watch-changes', PhpWatchChangesFeedProvider::getSource());
-    }
-
-    /**
-     * @test
-     */
-    public function it_should_log_if_entry_cant_be_parsed(): void
+    public function it_should_skip_and_log_a_malformed_entry(): void
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
+            new MockResponse(self::EXTERNAL_FEED_WITH_MALFORMED_ENTRY, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
+        $logger = new InMemoryLogger();
 
-        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedParser = new SimplePieFeedParser($client, $logger);
 
         // Act
-        $feedItems = $feedProvider->fetchFeedItems();
+        $feedItems = $feedParser->fetchFeed('some-source', 'https://example.com/rss');
 
         // Assert
-        self::assertCount(0, $feedItems);
+        self::assertCount(1, $feedItems);
 
-        self::assertCount(1, $this->logger->recordedLogs);
+        self::assertCount(1, $logger->recordedLogs);
 
-        $log = $this->logger->recordedLogs[0];
-
-        self::assertSame(LogLevel::WARNING, $log->level);
+        $log = $logger->recordedLogs[0];
         self::assertSame('[SimplePieParser] Could not parse entry', $log->message);
         self::assertSame([
-            'source' => PhpWatchChangesFeedProvider::getSource(),
-            'feed_url' => 'https://php.watch/feed/php-changes.xml',
-            'id' => 'https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase'
+            'source' => 'some-source',
+            'feed_url' => 'https://example.com/rss',
+            'id' => 'https://php.watch/versions/8.4/password_hash-bcrypt-cost-increase',
         ], $log->context);
     }
 }

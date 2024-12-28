@@ -2,24 +2,12 @@
 
 namespace App\Feed\Application\Service\FeedProvider;
 
-use App\Feed\Infrastructure\Helper\DOM\DOM;
-use DateTime;
-use DOMDocument;
-use DOMElement;
-use DOMNodeList;
-use http\Client\Request;
-use LogicException;
-use OutOfBoundsException;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Webmozart\Assert\Assert;
+use App\Feed\Application\FeedParser\FeedParser;
 
 final readonly class StitcherFeedProvider implements FeedProvider
 {
     public function __construct(
-        private HttpClientInterface $client,
-        private LoggerInterface $logger,
+        private FeedParser $feedParser,
     ) {
     }
 
@@ -33,34 +21,15 @@ final readonly class StitcherFeedProvider implements FeedProvider
      */
     public function fetchFeedItems(): array
     {
-        $response = $this->client->request('GET', 'https://stitcher.io/rss');
-
-        $feed = new DOMDocument();
-        $feed->loadXML($response->getContent());
-
         $feedItems = [];
 
-        foreach ($feed->getElementsByTagName('entry') as $entry) {
-            try {
-                $rawTitle = DOM::getString($entry, 'title');
-                $rawSummary = DOM::getString($entry, 'summary');
-                $updated = DOM::getDateTime($entry, 'updated');
-                $link = DOM::getLink($entry, 'link');
-            } catch (OutOfBoundsException | LogicException $exception) {
-                $this->logger->warning('[{source}] Failed to parse entry: {reason}.', [
-                    'source' => self::getSource(),
-                    'reason' => $exception->getMessage(),
-                ]);
-
-                continue;
-            }
-
+        foreach ($this->feedParser->fetchFeed(self::getSource(), 'https://stitcher.io/rss') as $item) {
             $feedItems[] = new FeedItem(
-                trim(html_entity_decode($rawTitle)),
-                $this->deriveFirstParagraphFromHtmlText($rawSummary),
-                $link,
-                $updated,
-                $this->getSource(),
+                trim(html_entity_decode($item->title)), // Simple pie double encodes html, let's fix this later
+                $this->deriveFirstParagraphFromHtmlText($item->summary),
+                $item->url,
+                $item->updated,
+                $item->source,
             );
         }
 

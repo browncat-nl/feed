@@ -3,6 +3,7 @@
 namespace Unit\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\Service\FeedProvider\StitcherFeedProvider;
+use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use DateTime;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
@@ -80,7 +81,6 @@ XML;
     <author>
       <name><![CDATA[ Brent Roose ]]></name>
     </author>
-    <updated>2023-07-01T00:00:00+00:00</updated>
   </entry>
 </feed>
 XML;
@@ -99,10 +99,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::EXTERNAL_FEED)
+            new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider($client, $this->logger);
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -154,10 +154,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::MALFORMED_EXTERNAL_FEED)
+            new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider($client, $this->logger);
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -170,10 +170,11 @@ XML;
         $log = $this->logger->recordedLogs[0];
 
         self::assertSame(LogLevel::WARNING, $log->level);
-        self::assertSame('[{source}] Failed to parse entry: {reason}.', $log->message);
+        self::assertSame('[SimplePieParser] Could not parse entry', $log->message);
         self::assertSame([
             'source' => StitcherFeedProvider::getSource(),
-            'reason' => "`summary` does not exist in DOMElement",
+            'feed_url' => 'https://stitcher.io/rss',
+            'id' => 'https://www.stitcher.io/blog/php-version-stats-july-2023'
         ], $log->context);
     }
 }
