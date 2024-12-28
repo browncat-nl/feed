@@ -2,8 +2,8 @@
 
 namespace Unit\Feed\Application\Service\FeedProvider;
 
-use App\Feed\Application\Service\FeedProvider\PhpWatchChangesFeedProvider;
 use App\Feed\Application\Service\FeedProvider\PhpWatchNewsFeedProvider;
+use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
@@ -68,10 +68,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::EXTERNAL_FEED)
+            new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new PhpWatchNewsFeedProvider($client, $this->logger);
+        $feedProvider = new PhpWatchNewsFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -108,10 +108,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::MALFORMED_EXTERNAL_FEED)
+            new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new PhpWatchChangesFeedProvider($client, $this->logger);
+        $feedProvider = new PhpWatchNewsFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -124,10 +124,11 @@ XML;
         $log = $this->logger->recordedLogs[0];
 
         self::assertSame(LogLevel::WARNING, $log->level);
-        self::assertSame('[{source}] Failed to parse entry: {reason}.', $log->message);
+        self::assertSame('[SimplePieParser] Could not parse entry', $log->message);
         self::assertSame([
-            'source' => PhpWatchChangesFeedProvider::getSource(),
-            'reason' => "`updated` does not exist in DOMElement",
+            'source' => PhpWatchNewsFeedProvider::getSource(),
+            'feed_url' => 'https://php.watch/feed/news.xml',
+            'id' => 'https://php.watch/news/2023/08/php83-rc1-released',
         ], $log->context);
     }
 }

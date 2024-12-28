@@ -3,6 +3,7 @@
 namespace Unit\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\Service\FeedProvider\MartinFowlerFeedProvider;
+use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use DateTime;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
@@ -135,10 +136,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::EXTERNAL_FEED)
+            new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new MartinFowlerFeedProvider($client, $this->logger);
+        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -190,10 +191,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::MALFORMED_EXTERNAL_FEED)
+            new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new MartinFowlerFeedProvider($client, $this->logger);
+        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -206,10 +207,11 @@ XML;
         $log = $this->logger->recordedLogs[0];
 
         self::assertSame(LogLevel::WARNING, $log->level);
-        self::assertSame('[{source}] Failed to parse entry: {reason}.', $log->message);
+        self::assertSame('[SimplePieParser] Could not parse entry', $log->message);
         self::assertSame([
             'source' => MartinFowlerFeedProvider::getSource(),
-            'reason' => "`updated` does not exist in DOMElement",
+            'feed_url' => 'https://martinfowler.com/feed.atom',
+            'id' => 'tag:martinfowler.com,2023-07-27:Exploring-Gen-AI---Three-versions-of-a-median',
         ], $log->context);
     }
 }

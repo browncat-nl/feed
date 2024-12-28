@@ -2,9 +2,8 @@
 
 namespace Unit\Feed\Application\Service\FeedProvider;
 
-use App\Feed\Application\Service\FeedProvider\MartinFowlerFeedProvider;
-use App\Feed\Application\Service\FeedProvider\StitcherFeedProvider;
 use App\Feed\Application\Service\FeedProvider\SymfonyFeedProvider;
+use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
@@ -98,7 +97,7 @@ XML;
 
     private const MALFORMED_XML = <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
         <title>Symfony Blog</title>
         <atom:link href="https://feeds.feedburner.com/symfony/blog" rel="self" type="application/rss+xml" />
@@ -112,7 +111,6 @@ XML;
             <link>https://symfony.com/blog/symfonycon-brussels-2023-a-memorable-game-ux-with-livecomponents?utm_source=Symfony%20Blog%20Feed&amp;utm_medium=feed</link>
             <guid isPermaLink="false">https://symfony.com/blog/symfonycon-brussels-2023-a-memorable-game-ux-with-livecomponents?utm_source=Symfony%20Blog%20Feed&amp;utm_medium=feed</guid>
             <dc:creator><![CDATA[ Eloïse Charrier ]]></dc:creator>
-            <pubDate>Sat, 18 Nov 2023 15:30:00 +0100</pubDate>
             <comments>https://symfony.com/blog/symfonycon-brussels-2023-a-memorable-game-ux-with-livecomponents?utm_source=Symfony%20Blog%20Feed&amp;utm_medium=feed#comments-list</comments>
         </item>     
   </channel>
@@ -133,10 +131,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::EXTERNAL_FEED)
+            new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new SymfonyFeedProvider($client, $this->logger);
+        $feedProvider = new SymfonyFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -185,10 +183,10 @@ XML;
     {
         // Arrange
         $client = new MockHttpClient([
-            new MockResponse(self::MALFORMED_XML)
+            new MockResponse(self::MALFORMED_XML, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new SymfonyFeedProvider($client, $this->logger);
+        $feedProvider = new SymfonyFeedProvider(new SimplePieFeedParser($client, $this->logger));
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -199,10 +197,11 @@ XML;
         $log = $this->logger->recordedLogs[0];
 
         self::assertSame(LogLevel::WARNING, $log->level);
-        self::assertSame('[{source}] Failed to parse entry: {reason}.', $log->message);
+        self::assertSame('[SimplePieParser] Could not parse entry', $log->message);
         self::assertSame([
             'source' => SymfonyFeedProvider::getSource(),
-            'reason' => "`description` does not exist in DOMElement",
+            'feed_url' => 'https://feeds.feedburner.com/symfony/blog',
+            'id' => 'https://symfony.com/blog/symfonycon-brussels-2023-a-memorable-game-ux-with-livecomponents?utm_source=Symfony%20Blog%20Feed&amp;utm_medium=feed',
         ], $log->context);
     }
 }

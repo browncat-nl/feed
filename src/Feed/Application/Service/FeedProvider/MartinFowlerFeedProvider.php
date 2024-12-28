@@ -2,18 +2,12 @@
 
 namespace App\Feed\Application\Service\FeedProvider;
 
-use App\Feed\Infrastructure\Helper\DOM\DOM;
-use DOMDocument;
-use LogicException;
-use OutOfBoundsException;
-use Psr\Log\LoggerInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Feed\Application\FeedParser\FeedParser;
 
 final readonly class MartinFowlerFeedProvider implements FeedProvider
 {
     public function __construct(
-        private HttpClientInterface $client,
-        private LoggerInterface $logger,
+        private FeedParser $feedParser,
     ) {
     }
 
@@ -25,37 +19,16 @@ final readonly class MartinFowlerFeedProvider implements FeedProvider
 
     public function fetchFeedItems(): array
     {
-        $response = $this->client->request('GET', 'https://martinfowler.com/feed.atom');
-
-        $feed = new DOMDocument();
-        $feed->loadXML($response->getContent());
-
         $newsItems = [];
 
-        foreach ($feed->getElementsByTagName('entry') as $entry) {
-            try {
-                $title = DOM::getString($entry, 'title');
-                $summary = DOM::getString($entry, 'content');
-                $updated = DOM::getDateTime($entry, 'updated');
-                $link = DOM::getLink($entry, 'link');
-            } catch (OutOfBoundsException | LogicException $exception) {
-                $this->logger->warning('[{source}] Failed to parse entry: {reason}.', [
-                    'source' => self::getSource(),
-                    'reason' => $exception->getMessage(),
-                ]);
-
-                continue;
-            }
-
-            $feedItems = new FeedItem(
-                $title,
-                $this->deriveFirstParagraphFromHtmlText($summary),
-                $link,
-                $updated,
-                self::getSource()
+        foreach ($this->feedParser->fetchFeed($this::getSource(), 'https://martinfowler.com/feed.atom') as $item) {
+            $newsItems[] = new FeedItem(
+                $item->title,
+                $this->deriveFirstParagraphFromHtmlText($item->summary),
+                $item->url,
+                $item->updated,
+                $item->source,
             );
-
-            $newsItems[] = $feedItems;
         }
 
         return $newsItems;
