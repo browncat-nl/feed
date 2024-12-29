@@ -3,25 +3,20 @@
 namespace App\Feed\Infrastructure\Console;
 
 use App\Common\Infrastructure\Messenger\CommandBus\CommandBus;
-use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Command\Feed\FetchFeedCommand;
-use App\Feed\Application\Service\FeedProvider\FeedProvider;
+use App\Feed\Application\Query\Source\GetAllSourceIdsQuery;
+use App\Feed\Application\Query\Source\Handler\GetAllSourceIdsHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 #[AsCommand('feed:fetch')]
 class FetchExternalFeedsCLICommand extends Command
 {
-    /**
-     * @param iterable<FeedProvider> $feedProviders
-     */
     public function __construct(
-        #[AutowireIterator(FeedProvider::class)]
-        private iterable $feedProviders,
+        private GetAllSourceIdsHandler $getAllSourceIdsHandler,
         private CommandBus $commandBus,
         private LoggerInterface $logger,
     ) {
@@ -30,15 +25,13 @@ class FetchExternalFeedsCLICommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $feedItems = [];
-
-        foreach ($this->feedProviders as $feedProvider) {
+        foreach ($this->getAllSourceIdsHandler->__invoke(new GetAllSourceIdsQuery()) as $sourceId) {
             $this->logger->info('[feed:fetch] Fetching feed for source {source}', [
-                'source' => $feedProvider::getSource(),
+                'sourceId' => $sourceId,
             ]);
 
             $this->commandBus->handle(new FetchFeedCommand(
-                $feedProvider::getSource(),
+                $sourceId,
             ));
         }
 

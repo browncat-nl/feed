@@ -2,8 +2,8 @@
 
 namespace App\Feed\Infrastructure\FeedParser\RssParser;
 
+use App\Feed\Application\FeedParser\FeedItem;
 use App\Feed\Application\FeedParser\FeedParser;
-use App\Feed\Application\Service\FeedProvider\FeedItem;
 use Psr\Log\LoggerInterface;
 use SimplePie\SimplePie;
 use Symfony\Component\HttpClient\Psr18Client;

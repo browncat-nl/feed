@@ -43,4 +43,9 @@ final class InMemorySourceRepository implements SourceRepository
 
         throw SourceNotFoundException::withName($name);
     }
+
+    public function findAllIds(): array
+    {
+        return array_values(array_map(fn ($source) => $source->getId(), $this->entities));
+    }
 }

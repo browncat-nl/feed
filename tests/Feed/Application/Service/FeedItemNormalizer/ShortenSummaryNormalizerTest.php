@@ -2,8 +2,8 @@
 
 namespace Feed\Application\Service\FeedItemNormalizer;
 
+use App\Feed\Application\FeedParser\FeedItem;
 use App\Feed\Application\Service\FeedItemNormalizer\ShortenSummaryNormalizer;
-use App\Feed\Application\Service\FeedProvider\FeedItem;
 use PHPUnit\Framework\TestCase;
 
 final class ShortenSummaryNormalizerTest extends TestCase

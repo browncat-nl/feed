@@ -3,10 +3,12 @@
 namespace App\Feed\Infrastructure\Persistence\Doctrine\Source;
 
 use App\Common\Infrastructure\Persistence\Doctrine\DoctrineRepository;
+use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\Source;
 use App\Feed\Domain\Source\SourceId;
 use App\Feed\Domain\Source\SourceRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -44,5 +46,16 @@ final readonly class DoctrineSourceRepository extends DoctrineRepository impleme
             ->getOneOrNullResult();
 
         return $source ?? throw SourceNotFoundException::withName($name);
+    }
+
+    public function findAllIds(): array
+    {
+        return array_values(array_map(
+            fn($id) => new SourceId($id),
+            $this->createQueryBuilder('s')
+                ->select('s.id')
+                ->getQuery()
+                ->getSingleColumnResult()
+        ));
     }
 }
