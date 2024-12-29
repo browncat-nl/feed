@@ -5,6 +5,8 @@ namespace Unit\Feed\Application\Service\FeedProvider;
 use App\Feed\Application\Service\FeedProvider\PhpWatchChangesFeedProvider;
 use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
+use Dev\Feed\Factory\SourceFactory;
+use Dev\Feed\Repository\InMemorySourceRepository;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -13,6 +15,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 final class PhpWatchChangesFeedProviderTest extends TestCase
 {
     private InMemoryLogger $logger;
+    private InMemorySourceRepository $sourceRepository;
 
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">
@@ -79,6 +82,13 @@ XML;
     {
         $this->logger = new InMemoryLogger();
 
+        $this->sourceRepository = new InMemorySourceRepository();
+
+        $this->sourceRepository->save(SourceFactory::setup()
+            ->withName(PhpWatchChangesFeedProvider::getSource())
+            ->withUrl('https://php.watch/feed/php-changes.xml')
+            ->create());
+
         parent::setUp();
     }
 
@@ -92,7 +102,7 @@ XML;
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -138,7 +148,7 @@ XML;
             new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new PhpWatchChangesFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();

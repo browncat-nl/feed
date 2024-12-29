@@ -2,9 +2,9 @@
 
 namespace Dev\Feed\Factory;
 
+use App\Common\Domain\Url\Url;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
-use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Source;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;

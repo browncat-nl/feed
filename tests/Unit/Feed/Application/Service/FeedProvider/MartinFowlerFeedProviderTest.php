@@ -6,6 +6,8 @@ use App\Feed\Application\Service\FeedProvider\MartinFowlerFeedProvider;
 use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use DateTime;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
+use Dev\Feed\Factory\SourceFactory;
+use Dev\Feed\Repository\InMemorySourceRepository;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -14,6 +16,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 class MartinFowlerFeedProviderTest extends TestCase
 {
     private InMemoryLogger $logger;
+    private InMemorySourceRepository $sourceRepository;
 
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -125,6 +128,12 @@ XML;
     protected function setUp(): void
     {
         $this->logger = new InMemoryLogger();
+        $this->sourceRepository = new InMemorySourceRepository();
+
+        $this->sourceRepository->save(SourceFactory::setup()
+            ->withName(MartinFowlerFeedProvider::getSource())
+            ->withUrl('https://martinfowler.com/feed.atom')
+            ->create());
 
         parent::setUp();
     }
@@ -139,7 +148,7 @@ XML;
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -194,7 +203,7 @@ XML;
             new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new MartinFowlerFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();

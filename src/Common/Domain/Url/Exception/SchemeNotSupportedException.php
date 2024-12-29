@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Feed\Domain\Article\Url\Exception;
+namespace App\Common\Domain\Url\Exception;
 
 use Exception;
 

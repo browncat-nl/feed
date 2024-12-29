@@ -2,13 +2,13 @@
 
 namespace App\Feed\Application\Command\Article\Handler;
 
+use App\Common\Domain\Url\Exception\MalformedUrlException;
+use App\Common\Domain\Url\Url;
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
-use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
-use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\SourceRepository;
 use Ramsey\Uuid\Uuid;

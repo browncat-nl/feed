@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Feed\Domain\Article\Url;
+namespace App\Common\Domain\Url;
 
-use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
-use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
+use App\Common\Domain\Url\Exception\MalformedUrlException;
+use App\Common\Domain\Url\Exception\SchemeNotSupportedException;
 
 final readonly class Url
 {

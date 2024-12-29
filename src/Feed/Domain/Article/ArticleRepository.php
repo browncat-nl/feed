@@ -3,7 +3,6 @@
 namespace App\Feed\Domain\Article;
 
 use App\Feed\Domain\Article\Exception\ArticleNotFoundException;
-use App\Feed\Domain\Article\Url\Url;
 
 interface ArticleRepository
 {

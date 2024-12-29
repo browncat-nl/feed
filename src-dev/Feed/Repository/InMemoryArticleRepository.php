@@ -6,7 +6,6 @@ use App\Feed\Domain\Article\Article;
 use App\Feed\Domain\Article\ArticleId;
 use App\Feed\Domain\Article\ArticleRepository;
 use App\Feed\Domain\Article\Exception\ArticleNotFoundException;
-use App\Feed\Domain\Article\Url\Url;
 
 final class InMemoryArticleRepository implements ArticleRepository
 {

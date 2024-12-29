@@ -3,11 +3,13 @@
 namespace App\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Domain\Source\SourceRepository;
 
 final class SymfonyFeedProvider implements FeedProvider
 {
     public function __construct(
         private FeedParser $feedParser,
+        private SourceRepository $sourceRepository,
     ) {
     }
 
@@ -18,6 +20,8 @@ final class SymfonyFeedProvider implements FeedProvider
 
     public function fetchFeedItems(): array
     {
-        return $this->feedParser->fetchFeed(self::getSource(), 'https://feeds.feedburner.com/symfony/blog');
+        $source = $this->sourceRepository->findByNameOrThrow($this::getSource());
+
+        return $this->feedParser->fetchFeed($source->getName(), $source->getUrl());
     }
 }

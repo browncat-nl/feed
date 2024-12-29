@@ -3,11 +3,13 @@
 namespace App\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Domain\Source\SourceRepository;
 
 final readonly class StitcherFeedProvider implements FeedProvider
 {
     public function __construct(
         private FeedParser $feedParser,
+        private SourceRepository $sourceRepository,
     ) {
     }
 
@@ -21,9 +23,11 @@ final readonly class StitcherFeedProvider implements FeedProvider
      */
     public function fetchFeedItems(): array
     {
+        $source = $this->sourceRepository->findByNameOrThrow($this::getSource());
+
         $feedItems = [];
 
-        foreach ($this->feedParser->fetchFeed(self::getSource(), 'https://stitcher.io/rss') as $item) {
+        foreach ($this->feedParser->fetchFeed($source->getName(), $source->getUrl()) as $item) {
             $feedItems[] = new FeedItem(
                 trim(html_entity_decode($item->title)), // Simple pie double encodes html, let's fix this later
                 $this->deriveFirstParagraphFromHtmlText($item->summary),

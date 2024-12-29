@@ -2,11 +2,11 @@
 
 namespace Unit\Feed\Application\Command\Article\Handler;
 
+use App\Common\Domain\Url\Exception\MalformedUrlException;
+use App\Common\Domain\Url\Exception\SchemeNotSupportedException;
 use App\Feed\Application\Command\Article\Handler\UpsertArticleHandler;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Domain\Article\ArticleId;
-use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
-use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use DateTime;
 use Dev\Feed\Factory\ArticleFactory;

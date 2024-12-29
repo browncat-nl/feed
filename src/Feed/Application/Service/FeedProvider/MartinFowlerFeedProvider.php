@@ -3,11 +3,13 @@
 namespace App\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Domain\Source\SourceRepository;
 
 final readonly class MartinFowlerFeedProvider implements FeedProvider
 {
     public function __construct(
         private FeedParser $feedParser,
+        private SourceRepository $sourceRepository,
     ) {
     }
 
@@ -19,9 +21,11 @@ final readonly class MartinFowlerFeedProvider implements FeedProvider
 
     public function fetchFeedItems(): array
     {
+        $source = $this->sourceRepository->findByNameOrThrow($this::getSource());
+
         $newsItems = [];
 
-        foreach ($this->feedParser->fetchFeed($this::getSource(), 'https://martinfowler.com/feed.atom') as $item) {
+        foreach ($this->feedParser->fetchFeed($source->getName(), $source->getUrl()) as $item) {
             $newsItems[] = new FeedItem(
                 $item->title,
                 $this->deriveFirstParagraphFromHtmlText($item->summary),

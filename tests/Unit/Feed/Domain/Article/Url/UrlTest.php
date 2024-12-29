@@ -2,10 +2,10 @@
 
 namespace Unit\Feed\Domain\Article\Url;
 
-use App\Feed\Domain\Article\Url\Exception\MalformedUrlException;
-use App\Feed\Domain\Article\Url\Exception\SchemeNotSupportedException;
-use App\Feed\Domain\Article\Url\Scheme;
-use App\Feed\Domain\Article\Url\Url;
+use App\Common\Domain\Url\Exception\MalformedUrlException;
+use App\Common\Domain\Url\Exception\SchemeNotSupportedException;
+use App\Common\Domain\Url\Scheme;
+use App\Common\Domain\Url\Url;
 use PHPUnit\Framework\TestCase;
 
 final class UrlTest extends TestCase
