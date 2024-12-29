@@ -4,11 +4,14 @@ namespace Unit\Feed\Infrastructure\Console;
 
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Command\Feed\FetchFeedCommand;
+use App\Feed\Application\Query\Source\Handler\GetAllSourceIdsHandler;
 use App\Feed\Application\Service\FeedProvider\FeedItem;
 use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use App\Feed\Infrastructure\Console\FetchExternalFeedsCLICommand;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use Dev\Common\Infrastructure\Messenger\CommandBus\RecordingCommandBus;
+use Dev\Feed\Factory\SourceFactory;
+use Dev\Feed\Repository\InMemorySourceRepository;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -17,67 +20,29 @@ final class FetchExternalFeedsCLICommandTest extends TestCase
 {
     private RecordingCommandBus $commandBus;
     private LoggerInterface $logger;
-    private FeedProvider $dummyFeedProvider1;
-    private FeedProvider $dummyFeedProvider2;
+    private InMemorySourceRepository $sourceRepository;
 
 
     public function setUp(): void
     {
         $this->commandBus = new RecordingCommandBus();
         $this->logger = new InMemoryLogger();
-
-        $this->dummyFeedProvider1 = new class implements FeedProvider {
-            public static function getSource(): string
-            {
-                return 'dummy_feed_1';
-            }
-
-            public function fetchFeedItems(): array
-            {
-                return [
-                    new FeedItem(
-                        'test title 1.1',
-                        'test summary 1.1',
-                        'https://example.com/test-title-1-1',
-                        new \DateTime('2022-03-03 00:00:00'),
-                        self::getSource(),
-                    )
-                ];
-            }
-        };
-
-        $this->dummyFeedProvider2 = new class implements FeedProvider {
-            public static function getSource(): string
-            {
-                return 'dummy_feed_2';
-            }
-
-            public function fetchFeedItems(): array
-            {
-                return [
-                    new FeedItem(
-                        'test title 2.1',
-                        'test summary 2.1',
-                        'https://example.com/test-title-2-1',
-                        new \DateTime('2022-03-03 00:00:00'),
-                        self::getSource(),
-                    )
-                ];
-            }
-        };
+        $this->sourceRepository = new InMemorySourceRepository();
     }
 
     /**
      * @test
      */
-    public function it_should_retrieve_and_store_the_feed(): void
+    public function it_should_dispatch_the_fetch_feed_command_for_all_sources(): void
     {
         // Arrange
+        $source1 = SourceFactory::setup()->create();
+        $source2 = SourceFactory::setup()->create();
+
+        $this->sourceRepository->save($source1, $source2);
+
         $command = new FetchExternalFeedsCLICommand(
-            [
-                $this->dummyFeedProvider1,
-                $this->dummyFeedProvider2,
-            ],
+            new GetAllSourceIdsHandler($this->sourceRepository),
             $this->commandBus,
             $this->logger,
         );
@@ -89,11 +54,11 @@ final class FetchExternalFeedsCLICommandTest extends TestCase
 
         // Assert
         self::assertEquals(new FetchFeedCommand(
-            'dummy_feed_1'
+            (string) $source1->getId(),
         ), $this->commandBus->shiftCommand());
 
         self::assertEquals(new FetchFeedCommand(
-            'dummy_feed_2'
+            (string) $source2->getId(),
         ), $this->commandBus->shiftCommand());
 
         self::assertTrue($this->commandBus->isEmpty());

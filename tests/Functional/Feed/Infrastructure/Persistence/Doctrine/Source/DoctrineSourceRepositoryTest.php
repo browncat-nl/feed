@@ -51,4 +51,23 @@ class DoctrineSourceRepositoryTest extends DoctrineTestCase
         // Act
         $this->repository->findByNameOrThrow('non-existing');
     }
+
+    /**
+     * @test
+     */
+    public function it_should_find_all_the_sources_and_return_their_ids(): void
+    {
+        // Arrange
+        $source1 = SourceFactory::setup()->create();
+        $source2 = SourceFactory::setup()->create();
+
+        $this->repository->save($source1, $source2);
+        $this->getDoctrine()->resetManager();
+
+        // Act
+        $sourceIds = $this->repository->findAllIds();
+
+        // Assert
+        self::assertEquals([$source1->getId(), $source2->getId()], $sourceIds);
+    }
 }

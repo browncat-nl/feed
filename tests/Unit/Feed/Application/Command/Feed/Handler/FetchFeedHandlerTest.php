@@ -2,70 +2,55 @@
 
 namespace Unit\Feed\Application\Command\Feed\Handler;
 
-use App\Feed\Application\Command\Article\Handler\UpsertArticleHandler;
 use App\Feed\Application\Command\Feed\FetchFeedCommand;
 use App\Feed\Application\Command\Feed\Handler\FetchFeedHandler;
 use App\Feed\Application\Event\Feed\FeedItemWasFetchedEvent;
-use App\Feed\Application\Exception\Feed\FeedCouldNotBeProvidedException;
+use App\Feed\Application\FeedParser\FeedParser;
 use App\Feed\Application\Service\FeedProvider\FeedItem;
-use App\Feed\Application\Service\FeedProvider\FeedProvider;
-use Dev\Common\Infrastructure\Logger\InMemoryLogger;
+use App\Feed\Domain\Source\Exception\SourceNotFoundException;
+use App\Feed\Domain\Source\SourceId;
 use Dev\Common\Infrastructure\Messenger\EventBus\RecordingEventBus;
-use Dev\Feed\Repository\InMemoryArticleRepository;
+use Dev\Feed\Factory\SourceFactory;
 use Dev\Feed\Repository\InMemorySourceRepository;
 use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\Service\ServiceLocatorTrait;
-use Symfony\Contracts\Service\ServiceProviderInterface;
 
 final class FetchFeedHandlerTest extends TestCase
 {
     private FetchFeedHandler $handler;
+    private InMemorySourceRepository $sourceRepository;
     private RecordingEventBus $eventBus;
 
     public function setUp(): void
     {
-        $feedProviderServiceLocator = new class ([
-            'dummy_feed_1' => new class implements FeedProvider {
-                public function __invoke(): self
-                {
-                    return $this;
-                }
-
-                public static function getSource(): string
-                {
-                    return 'dummy_feed_1';
-                }
-
-                public function fetchFeedItems(): array
-                {
-                    return [
-                        new FeedItem(
-                            'test title 1.1',
-                            'test summary 1.1',
-                            'https://example.com/test-title-1-1',
-                            new \DateTime('2022-03-03 00:00:00'),
-                            self::getSource(),
-                        ),
-                        new FeedItem(
-                            'test title 1.2',
-                            'test summary 1.2',
-                            'https://example.com/test-title-1-2',
-                            new \DateTime('2022-03-03 00:00:00'),
-                            self::getSource(),
-                        )
-                    ];
-                }
+        $feedParser = new class implements FeedParser {
+            public function fetchFeed(string $source, string $url): array
+            {
+                return [
+                    new FeedItem(
+                        'test title 1.1',
+                        'test summary 1.1',
+                        'https://example.com/test-title-1-1',
+                        new \DateTime('2022-03-03 00:00:00'),
+                        $source,
+                    ),
+                    new FeedItem(
+                        'test title 1.2',
+                        'test summary 1.2',
+                        'https://example.com/test-title-1-2',
+                        new \DateTime('2022-03-03 00:00:00'),
+                        $source,
+                    )
+                ];
             }
-        ]) implements
-            ServiceProviderInterface
-        {
-            use ServiceLocatorTrait;
         };
 
+
+        $this->sourceRepository = new InMemorySourceRepository();
         $this->eventBus = new RecordingEventBus();
 
         $this->handler = new FetchFeedHandler(
-            $feedProviderServiceLocator,
+            $this->sourceRepository,
+            $feedParser,
             $this->eventBus,
         );
     }
@@ -76,7 +61,10 @@ final class FetchFeedHandlerTest extends TestCase
     public function it_should_retrieve_the_feed(): void
     {
         // Arrange
-        $command = new FetchFeedCommand('dummy_feed_1');
+        $source = SourceFactory::setup()->create();
+        $this->sourceRepository->save($source);
+
+        $command = new FetchFeedCommand((string) $source->getId());
 
         // Act
         $this->handler->__invoke($command);
@@ -90,7 +78,7 @@ final class FetchFeedHandlerTest extends TestCase
         self::assertEquals('test summary 1.1', $event->feedItem->summary);
         self::assertEquals('https://example.com/test-title-1-1', $event->feedItem->url);
         self::assertEquals(new \DateTime('2022-03-03 00:00:00'), $event->feedItem->updated);
-        self::assertEquals('dummy_feed_1', $event->feedItem->source);
+        self::assertEquals($source->getName(), $event->feedItem->source);
 
         $event2 = $this->eventBus->shiftEvent();
 
@@ -100,7 +88,7 @@ final class FetchFeedHandlerTest extends TestCase
         self::assertEquals('test summary 1.2', $event2->feedItem->summary);
         self::assertEquals('https://example.com/test-title-1-2', $event2->feedItem->url);
         self::assertEquals(new \DateTime('2022-03-03 00:00:00'), $event2->feedItem->updated);
-        self::assertEquals('dummy_feed_1', $event2->feedItem->source);
+        self::assertEquals($source->getName(), $event2->feedItem->source);
 
         self::assertTrue($this->eventBus->isEmpty());
     }
@@ -108,13 +96,13 @@ final class FetchFeedHandlerTest extends TestCase
     /**
      * @test
      */
-    public function it_should_throw_if_feed_could_not_be_found(): void
+    public function it_should_throw_if_the_source_does_not_exist(): void
     {
         // Assert
-        self::expectExceptionObject(FeedCouldNotBeProvidedException::withNonExistingSource('non-existing-source'));
+        self::expectExceptionObject(SourceNotFoundException::withSourceId(new SourceId('adc155d7-319f-400b-9321-c07a0f073ba0')));
 
         // Arrange
-        $command = new FetchFeedCommand('non-existing-source');
+        $command = new FetchFeedCommand('adc155d7-319f-400b-9321-c07a0f073ba0');
 
         // Act
         $this->handler->__invoke($command);

@@ -10,10 +10,10 @@ use App\Feed\Application\Command\Feed\Handler\FetchFeedHandler;
 final readonly class FetchFeedCommand
 {
     /**
-     * @param string $source
+     * @param string $sourceId
      */
     public function __construct(
-        public string $source
+        public string $sourceId
     ) {
     }
 }
