@@ -2,6 +2,9 @@
 
 namespace Unit\Feed\Application\Service\FeedProvider;
 
+use App\Feed\Application\Service\FeedItemNormalizer\FeedItemNormalizer;
+use App\Feed\Application\Service\FeedItemNormalizer\RemoveHtmlTagsNormalizer;
+use App\Feed\Application\Service\FeedItemNormalizer\ShortenSummaryNormalizer;
 use App\Feed\Application\Service\FeedProvider\StitcherFeedProvider;
 use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use DateTime;
@@ -19,6 +22,11 @@ class StitcherFeedProviderTest extends TestCase
 {
     private InMemoryLogger $logger;
     private InMemorySourceRepository $sourceRepository;
+
+    /**
+     * @var iterable<FeedItemNormalizer>
+     */
+    private iterable $feedItemNormalizers;
 
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0"?>
@@ -98,6 +106,11 @@ XML;
             ->withUrl('https://stitcher.io/rss')
             ->create());
 
+        $this->feedItemNormalizers = [
+            new RemoveHtmlTagsNormalizer(),
+            new ShortenSummaryNormalizer(),
+        ];
+
         parent::setUp();
     }
 
@@ -111,7 +124,7 @@ XML;
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->feedItemNormalizers, $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -121,7 +134,7 @@ XML;
 
         self::assertSame("PHP version stats: July, 2023", $feedItems[0]->title);
         self::assertSame(
-            "Once again, I'm writing my summary of which PHP versions are used across the community. You can read the previous edition here, but I'll also include historic data in this post.",
+            "Once again, I'm writing my summary of which PHP versions are used across the community. You can read the previous edition here, but I'll also include historic data in this post. As always, it's important to note that I'm working with the data available to us. That means that t...",
             $feedItems[0]->summary
         );
         self::assertSame("https://stitcher.io/blog/php-version-stats-july-2023", $feedItems[0]->url);
@@ -130,7 +143,7 @@ XML;
 
         self::assertSame("What's new in PHP 8.3", $feedItems[1]->title);
         self::assertSame(
-            "PHP 8.3 will be released on November 23, 2023; it has improvements to readonly classes, the new json_validate() function, additions to the recently added Randomizer class, stack overflow detection, and more.",
+            "PHP 8.3 will be released on November 23, 2023; it has improvements to readonly classes, the new json_validate() function, additions to the recently added Randomizer class, stack overflow detection, and more. In this post, we'll go through all features, performance improvements...",
             $feedItems[1]->summary
         );
         self::assertSame("https://stitcher.io/blog/new-in-php-83", $feedItems[1]->url);
@@ -139,7 +152,7 @@ XML;
 
         self::assertSame("#[Override] in PHP 8.3", $feedItems[2]->title);
         self::assertSame(
-            "There's a new feature in PHP 8.3: the #[Override] attribute. It's a feature already known in other languages, but let me summarize in case you're unaware of what it does.",
+            "There's a new feature in PHP 8.3: the #[Override] attribute. It's a feature already known in other languages, but let me summarize in case you're unaware of what it does. Marking a method with the #[Override] attributes signifies that you know this method is overriding a paren...",
             $feedItems[2]->summary
         );
         self::assertSame("https://stitcher.io/blog/override-in-php-83", $feedItems[2]->url);
@@ -166,7 +179,7 @@ XML;
             new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->feedItemNormalizers, $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
