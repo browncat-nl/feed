@@ -2,8 +2,7 @@
 
 namespace App\Feed\Application\Event\Feed;
 
-use App\Feed\Application\Service\FeedProvider\FeedItem;
-use DateTime;
+use App\Feed\Application\FeedParser\FeedItem;
 
 final readonly class FeedItemWasFetchedEvent
 {

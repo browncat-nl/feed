@@ -2,8 +2,6 @@
 
 namespace App\Feed\Application\FeedParser;
 
-use App\Feed\Application\Service\FeedProvider\FeedItem;
-
 interface FeedParser
 {
     /**

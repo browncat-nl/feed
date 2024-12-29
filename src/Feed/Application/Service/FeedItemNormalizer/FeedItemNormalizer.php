@@ -2,7 +2,7 @@
 
 namespace App\Feed\Application\Service\FeedItemNormalizer;
 
-use App\Feed\Application\Service\FeedProvider\FeedItem;
+use App\Feed\Application\FeedParser\FeedItem;
 
 interface FeedItemNormalizer
 {

@@ -2,11 +2,8 @@
 
 namespace Unit\Feed\Infrastructure\Console;
 
-use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Command\Feed\FetchFeedCommand;
 use App\Feed\Application\Query\Source\Handler\GetAllSourceIdsHandler;
-use App\Feed\Application\Service\FeedProvider\FeedItem;
-use App\Feed\Application\Service\FeedProvider\FeedProvider;
 use App\Feed\Infrastructure\Console\FetchExternalFeedsCLICommand;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use Dev\Common\Infrastructure\Messenger\CommandBus\RecordingCommandBus;
