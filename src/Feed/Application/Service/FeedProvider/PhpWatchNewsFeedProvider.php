@@ -3,11 +3,13 @@
 namespace App\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Domain\Source\SourceRepository;
 
 final class PhpWatchNewsFeedProvider implements FeedProvider
 {
     public function __construct(
         private FeedParser $feedParser,
+        private SourceRepository $sourceRepository,
     ) {
     }
 
@@ -19,6 +21,8 @@ final class PhpWatchNewsFeedProvider implements FeedProvider
 
     public function fetchFeedItems(): array
     {
-        return $this->feedParser->fetchFeed(self::getSource(), 'https://php.watch/feed/news.xml');
+        $source = $this->sourceRepository->findByNameOrThrow($this::getSource());
+
+        return $this->feedParser->fetchFeed($source->getName(), $source->getUrl());
     }
 }

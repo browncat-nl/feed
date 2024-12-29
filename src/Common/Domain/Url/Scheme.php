@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Feed\Domain\Article\Url;
+namespace App\Common\Domain\Url;
 
 /**
  * List of supported schemes.

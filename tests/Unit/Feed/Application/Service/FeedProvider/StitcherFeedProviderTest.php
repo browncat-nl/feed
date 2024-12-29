@@ -6,6 +6,8 @@ use App\Feed\Application\Service\FeedProvider\StitcherFeedProvider;
 use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
 use DateTime;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
+use Dev\Feed\Factory\SourceFactory;
+use Dev\Feed\Repository\InMemorySourceRepository;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -16,6 +18,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class StitcherFeedProviderTest extends TestCase
 {
     private InMemoryLogger $logger;
+    private InMemorySourceRepository $sourceRepository;
 
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0"?>
@@ -88,6 +91,12 @@ XML;
     protected function setUp(): void
     {
         $this->logger = new InMemoryLogger();
+        $this->sourceRepository = new InMemorySourceRepository();
+
+        $this->sourceRepository->save(SourceFactory::setup()
+            ->withName(StitcherFeedProvider::getSource())
+            ->withUrl('https://stitcher.io/rss')
+            ->create());
 
         parent::setUp();
     }
@@ -102,7 +111,7 @@ XML;
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();
@@ -157,7 +166,7 @@ XML;
             new MockResponse(self::MALFORMED_EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger));
+        $feedProvider = new StitcherFeedProvider(new SimplePieFeedParser($client, $this->logger), $this->sourceRepository);
 
         // Act
         $feedItems = $feedProvider->fetchFeedItems();

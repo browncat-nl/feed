@@ -4,9 +4,9 @@ namespace App\Feed\Domain\Article;
 
 use App\Common\Domain\EventPublishingAggregateRoot;
 use App\Common\Domain\EventPublishingAggregateRootTrait;
+use App\Common\Domain\Url\Url;
 use App\Feed\Domain\Article\Event\Article\ArticleAddedEvent;
 use App\Feed\Domain\Article\Event\Article\ArticleUpdatedEvent;
-use App\Feed\Domain\Article\Url\Url;
 use App\Feed\Domain\Source\Source;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
