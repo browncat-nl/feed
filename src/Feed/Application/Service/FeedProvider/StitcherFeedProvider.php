@@ -3,12 +3,16 @@
 namespace App\Feed\Application\Service\FeedProvider;
 
 use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Application\Service\FeedItemNormalizer\FeedItemNormalizer;
 use App\Feed\Domain\Source\SourceRepository;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final readonly class StitcherFeedProvider implements FeedProvider
 {
     public function __construct(
         private FeedParser $feedParser,
+        #[AutowireIterator(FeedItemNormalizer::class)]
+        private iterable $feedItemNormalizers,
         private SourceRepository $sourceRepository,
     ) {
     }
@@ -27,35 +31,14 @@ final readonly class StitcherFeedProvider implements FeedProvider
 
         $feedItems = [];
 
-        foreach ($this->feedParser->fetchFeed($source->getName(), $source->getUrl()) as $item) {
-            $feedItems[] = new FeedItem(
-                trim(html_entity_decode($item->title)), // Simple pie double encodes html, let's fix this later
-                $this->deriveFirstParagraphFromHtmlText($item->summary),
-                $item->url,
-                $item->updated,
-                $item->source,
-            );
+        foreach ($this->feedParser->fetchFeed($source->getName(), $source->getUrl()) as $feedItem) {
+            foreach ($this->feedItemNormalizers as $feedItemNormalizer) {
+                $feedItem = $feedItemNormalizer($feedItem);
+            }
+
+            $feedItems[] = $feedItem;
         }
 
         return $feedItems;
-    }
-
-    private function deriveFirstParagraphFromHtmlText(string $text): string
-    {
-        $textFirstParagraphStart = strpos($text, '<p>');
-
-        if ($textFirstParagraphStart === false) {
-            return html_entity_decode(strip_tags(mb_strimwidth($text, 0, 277, "...")));
-        }
-
-        $textFirstParagraphEnd = strpos($text, '</p>', $textFirstParagraphStart);
-
-        $firstParagraph =  substr(
-            $text,
-            $textFirstParagraphStart,
-            $textFirstParagraphEnd - $textFirstParagraphStart + 4
-        );
-
-        return html_entity_decode(strip_tags($firstParagraph));
     }
 }
