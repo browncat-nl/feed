@@ -4,7 +4,6 @@ namespace App;
 
 use App\Common\Infrastructure\Messenger\CommandBus\AsCommandHandler;
 use App\Common\Infrastructure\Messenger\EventBus\AsEventSubscriber;
-use App\Feed\Infrastructure\Framework\CompilerPass\FeedProviderSourceShouldBeUniqueCompilerPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -48,8 +47,5 @@ class Kernel extends BaseKernel
 
             $definition->addTag('messenger.message_handler', $tagAttributes);
         });
-
-        // @todo move to bundle
-        $container->addCompilerPass(new FeedProviderSourceShouldBeUniqueCompilerPass());
     }
 }
