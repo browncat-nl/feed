@@ -2,7 +2,7 @@
 
 namespace App\Feed\Application\Service\FeedItemNormalizer;
 
-use App\Feed\Application\FeedParser\FeedItem;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 #[AsTaggedItem(priority: -10)]

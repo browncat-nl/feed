@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Feed\Infrastructure\FeedParser\RssParser;
+namespace App\Feed\Infrastructure\FeedFetcher\RssFetcher;
 
-use App\Feed\Application\FeedParser\FeedItem;
-use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Application\Service\FeedFetcher\FeedFetcher;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use Psr\Log\LoggerInterface;
 use SimplePie\SimplePie;
 use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class SimplePieFeedParser implements FeedParser
+final class SimplePieFeedFetcher implements FeedFetcher
 {
     public function __construct(private HttpClientInterface $client, private LoggerInterface $logger)
     {
     }
 
-    public function fetchFeed(string $source, string $url): array
+    public function __invoke(string $source, string $url): array
     {
         $psr18Client = new Psr18Client($this->client);
 

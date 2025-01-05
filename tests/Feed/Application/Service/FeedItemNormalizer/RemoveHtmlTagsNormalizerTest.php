@@ -2,7 +2,7 @@
 
 namespace Feed\Application\Service\FeedItemNormalizer;
 
-use App\Feed\Application\FeedParser\FeedItem;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use App\Feed\Application\Service\FeedItemNormalizer\RemoveHtmlTagsNormalizer;
 use PHPUnit\Framework\TestCase;
 

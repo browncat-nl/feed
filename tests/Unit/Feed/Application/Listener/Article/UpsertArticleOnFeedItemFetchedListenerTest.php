@@ -4,8 +4,8 @@ namespace Unit\Feed\Application\Listener\Article;
 
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Event\Feed\FeedItemWasFetchedEvent;
-use App\Feed\Application\FeedParser\FeedItem;
 use App\Feed\Application\Listener\Article\UpsertArticleOnFeedItemFetchedListener;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use Dev\Common\Infrastructure\Messenger\CommandBus\RecordingCommandBus;
 use PHPUnit\Framework\TestCase;
 

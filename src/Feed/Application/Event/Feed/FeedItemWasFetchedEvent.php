@@ -2,7 +2,7 @@
 
 namespace App\Feed\Application\Event\Feed;
 
-use App\Feed\Application\FeedParser\FeedItem;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 
 final readonly class FeedItemWasFetchedEvent
 {

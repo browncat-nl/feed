@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Feed\Application\FeedParser;
+namespace App\Feed\Application\Service\FeedFetcher;
 
 use DateTime;
 
