@@ -1,14 +1,14 @@
 <?php
 
-namespace Unit\Feed\Infrastructure\FeedParser\RssParser;
+namespace Unit\Feed\Infrastructure\FeedFetcher\RssFetcher;
 
-use App\Feed\Infrastructure\FeedParser\RssParser\SimplePieFeedParser;
+use App\Feed\Infrastructure\FeedFetcher\RssFetcher\SimplePieFeedFetcher;
 use Dev\Common\Infrastructure\Logger\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class SimplePieFeedParserTest extends TestCase
+final class SimplePieFeedFetcherTest extends TestCase
 {
     private const EXTERNAL_FEED = <<<XML
 <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">
@@ -87,10 +87,10 @@ XML;
             new MockResponse(self::EXTERNAL_FEED, ['response_headers' => ['Content-Type' => 'application/rss+xml']])
         ]);
 
-        $feedParser = new SimplePieFeedParser($client, new InMemoryLogger());
+        $feedFetcher = new SimplePieFeedFetcher($client, new InMemoryLogger());
 
         // Act
-        $feedItems = $feedParser->fetchFeed('some-source', 'https://example.com/rss');
+        $feedItems = $feedFetcher->__invoke('some-source', 'https://example.com/rss');
 
         // Assert
         self::assertCount(3, $feedItems);
@@ -125,10 +125,10 @@ XML;
         ]);
         $logger = new InMemoryLogger();
 
-        $feedParser = new SimplePieFeedParser($client, $logger);
+        $feedFetcher = new SimplePieFeedFetcher($client, $logger);
 
         // Act
-        $feedItems = $feedParser->fetchFeed('some-source', 'https://example.com/rss');
+        $feedItems = $feedFetcher->__invoke('some-source', 'https://example.com/rss');
 
         // Assert
         self::assertCount(1, $feedItems);

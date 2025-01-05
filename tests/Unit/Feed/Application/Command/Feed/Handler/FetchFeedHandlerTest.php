@@ -5,8 +5,8 @@ namespace Unit\Feed\Application\Command\Feed\Handler;
 use App\Feed\Application\Command\Feed\FetchFeedCommand;
 use App\Feed\Application\Command\Feed\Handler\FetchFeedHandler;
 use App\Feed\Application\Event\Feed\FeedItemWasFetchedEvent;
-use App\Feed\Application\FeedParser\FeedItem;
-use App\Feed\Application\FeedParser\FeedParser;
+use App\Feed\Application\Service\FeedFetcher\FeedFetcher;
+use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use App\Feed\Domain\Source\Exception\SourceNotFoundException;
 use App\Feed\Domain\Source\SourceId;
 use Dev\Common\Infrastructure\Messenger\EventBus\RecordingEventBus;
@@ -22,8 +22,8 @@ final class FetchFeedHandlerTest extends TestCase
 
     public function setUp(): void
     {
-        $feedParser = new class implements FeedParser {
-            public function fetchFeed(string $source, string $url): array
+        $feedFetcher = new class implements FeedFetcher {
+            public function __invoke(string $source, string $url): array
             {
                 return [
                     new FeedItem(
@@ -50,7 +50,7 @@ final class FetchFeedHandlerTest extends TestCase
 
         $this->handler = new FetchFeedHandler(
             $this->sourceRepository,
-            $feedParser,
+            $feedFetcher,
             $this->eventBus,
         );
     }
