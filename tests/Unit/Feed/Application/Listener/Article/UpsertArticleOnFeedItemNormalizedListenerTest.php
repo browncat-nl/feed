@@ -4,20 +4,21 @@ namespace Unit\Feed\Application\Listener\Article;
 
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
 use App\Feed\Application\Event\Feed\FeedItemWasFetchedEvent;
-use App\Feed\Application\Listener\Article\UpsertArticleOnFeedItemFetchedListener;
+use App\Feed\Application\Event\Feed\FeedItemWasNormalizedEvent;
+use App\Feed\Application\Listener\Article\UpsertArticleOnFeedItemNormalizedListener;
 use App\Feed\Application\Service\FeedFetcher\FeedItem;
 use Dev\Common\Infrastructure\Messenger\CommandBus\RecordingCommandBus;
 use PHPUnit\Framework\TestCase;
 
-final class UpsertArticleOnFeedItemFetchedListenerTest extends TestCase
+final class UpsertArticleOnFeedItemNormalizedListenerTest extends TestCase
 {
-    private UpsertArticleOnFeedItemFetchedListener $listener;
+    private UpsertArticleOnFeedItemNormalizedListener $listener;
     private RecordingCommandBus $commandBus;
 
     protected function setUp(): void
     {
         $this->commandBus = new RecordingCommandBus();
-        $this->listener = new UpsertArticleOnFeedItemFetchedListener($this->commandBus);
+        $this->listener = new UpsertArticleOnFeedItemNormalizedListener($this->commandBus);
     }
 
     /**
@@ -34,10 +35,10 @@ final class UpsertArticleOnFeedItemFetchedListenerTest extends TestCase
             'test-source',
         );
 
-        $event = new FeedItemWasFetchedEvent($feedItem);
+        $event = new FeedItemWasNormalizedEvent($feedItem);
 
         // Act
-        $this->listener->onFeedItemWasFetchedEvent($event);
+        $this->listener->onFeedItemWasNormalizedEvent($event);
 
         // Assert
         $command = $this->commandBus->shiftCommand();

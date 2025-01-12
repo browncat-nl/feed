@@ -5,9 +5,9 @@ namespace App\Feed\Application\Listener\Article;
 use App\Common\Infrastructure\Messenger\CommandBus\CommandBus;
 use App\Common\Infrastructure\Messenger\EventBus\AsEventSubscriber;
 use App\Feed\Application\Command\Article\UpsertArticleCommand;
-use App\Feed\Application\Event\Feed\FeedItemWasFetchedEvent;
+use App\Feed\Application\Event\Feed\FeedItemWasNormalizedEvent;
 
-final readonly class UpsertArticleOnFeedItemFetchedListener
+final readonly class UpsertArticleOnFeedItemNormalizedListener
 {
     public function __construct(
         private CommandBus $commandBus,
@@ -15,7 +15,7 @@ final readonly class UpsertArticleOnFeedItemFetchedListener
     }
 
     #[AsEventSubscriber]
-    public function onFeedItemWasFetchedEvent(FeedItemWasFetchedEvent $event): void
+    public function onFeedItemWasNormalizedEvent(FeedItemWasNormalizedEvent $event): void
     {
         $feedItem = $event->feedItem;
 
