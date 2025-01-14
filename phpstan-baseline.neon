@@ -7,6 +7,18 @@ parameters:
 			path: src-dev/Common/Infrastructure/Cache/RecordingCache.php
 
 		-
+			message: '#^Parameter \#2 \$name of class App\\Feed\\Application\\Command\\Source\\AddSourceCommand constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Feed/Infrastructure/Console/AddSourceCLICommand.php
+
+		-
+			message: '#^Parameter \#3 \$feedUrl of class App\\Feed\\Application\\Command\\Source\\AddSourceCommand constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Feed/Infrastructure/Console/AddSourceCLICommand.php
+
+		-
 			message: '#^Method App\\Feed\\Infrastructure\\Persistence\\Doctrine\\Article\\DoctrineArticleRepository\:\:findByUrl\(\) should return App\\Feed\\Domain\\Article\\Article\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
