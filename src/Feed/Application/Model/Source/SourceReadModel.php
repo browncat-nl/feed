@@ -9,6 +9,7 @@ final readonly class SourceReadModel
     private function __construct(
         public string $id,
         public string $name,
+        public string $category,
     ) {
     }
 
@@ -17,6 +18,7 @@ final readonly class SourceReadModel
         return new self(
             $source->getId(),
             $source->getName(),
+            $source->getCategory()->getName(),
         );
     }
 }

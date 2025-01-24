@@ -14,6 +14,8 @@ final readonly class SourceType
         public string $id,
         #[GraphQL\Field]
         public string $name,
+        #[GraphQL\Field]
+        public string $category,
     ) {
     }
 
@@ -22,6 +24,7 @@ final readonly class SourceType
         return new self(
             $source->id,
             $source->name,
+            $source->category,
         );
     }
 }

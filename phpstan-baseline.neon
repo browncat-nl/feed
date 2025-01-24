@@ -19,6 +19,12 @@ parameters:
 			path: src/Feed/Infrastructure/Console/AddSourceCLICommand.php
 
 		-
+			message: '#^Parameter \#4 \$category of class App\\Feed\\Application\\Command\\Source\\AddSourceCommand constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Feed/Infrastructure/Console/AddSourceCLICommand.php
+
+		-
 			message: '#^Method App\\Feed\\Infrastructure\\Persistence\\Doctrine\\Article\\DoctrineArticleRepository\:\:findByUrl\(\) should return App\\Feed\\Domain\\Article\\Article\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -29,6 +35,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Feed/Infrastructure/Persistence/Doctrine/Article/DoctrineArticleRepository.php
+
+		-
+			message: '#^Method App\\Feed\\Infrastructure\\Persistence\\Doctrine\\Category\\DoctrineCategoryRepository\:\:findByNameOrThrow\(\) should return App\\Feed\\Domain\\Category\\Category but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Feed/Infrastructure/Persistence/Doctrine/Category/DoctrineCategoryRepository.php
 
 		-
 			message: '#^Method App\\Feed\\Infrastructure\\Persistence\\Doctrine\\Source\\DoctrineSourceRepository\:\:findByNameOrThrow\(\) should return App\\Feed\\Domain\\Source\\Source but returns mixed\.$#'

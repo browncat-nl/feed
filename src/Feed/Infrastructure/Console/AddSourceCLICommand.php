@@ -23,7 +23,8 @@ final class AddSourceCLICommand extends Command
     {
         $this
             ->addArgument('name', InputArgument::REQUIRED)
-            ->addArgument('feedUrl', InputArgument::REQUIRED);
+            ->addArgument('feedUrl', InputArgument::REQUIRED)
+            ->addArgument('category', InputArgument::REQUIRED);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -32,6 +33,7 @@ final class AddSourceCLICommand extends Command
             Uuid::uuid4(),
             $input->getArgument('name'),
             $input->getArgument('feedUrl'),
+            $input->getArgument('category'),
         ));
 
         return Command::SUCCESS;

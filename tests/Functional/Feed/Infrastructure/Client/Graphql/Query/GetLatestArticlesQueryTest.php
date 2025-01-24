@@ -84,9 +84,10 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
                             url
                             source {
                                 id,
-                                name
+                                name,
+                                category
                             },
-                            updated                
+                            updated              
                         }
                     },
                     pageInfo {
@@ -121,6 +122,7 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
                                 'source' => [
                                     'id' => (string) $article3->getSource()->getId(),
                                     'name' => $article3->getSource()->getName(),
+                                    'category' => $article3->getSource()->getCategory()->getName(),
                                 ],
                                 'updated' => $article3->getUpdated()->format('Y-m-d H:i:s'),
                             ],
@@ -134,6 +136,7 @@ class GetLatestArticlesQueryTest extends GraphqlTestCase
                                 'source' => [
                                     'id' => (string) $article2->getSource()->getId(),
                                     'name' => $article2->getSource()->getName(),
+                                    'category' => $article2->getSource()->getCategory()->getName(),
                                 ],
                                 'updated' => $article2->getUpdated()->format('Y-m-d H:i:s'),
                             ],

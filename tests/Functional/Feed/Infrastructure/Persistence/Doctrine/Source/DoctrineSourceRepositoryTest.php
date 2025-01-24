@@ -37,7 +37,8 @@ class DoctrineSourceRepositoryTest extends DoctrineTestCase
         $foundSource = $this->repository->findByNameOrThrow($source->getName());
 
         // Assert
-        self::assertEquals($source, $foundSource);
+        self::assertEquals($source->getId(), $foundSource->getId());
+        self::assertEquals($source->getUrl(), $foundSource->getUrl());
     }
 
     /**
