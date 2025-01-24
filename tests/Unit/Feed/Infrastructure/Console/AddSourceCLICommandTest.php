@@ -29,7 +29,8 @@ final class AddSourceCLICommandTest extends TestCase
         // Act
         $this->commandTester->execute([
             'name' => 'some-source',
-            'feedUrl' => 'https://example.com/some-source'
+            'feedUrl' => 'https://example.com/some-source',
+            'category' => 'some-category',
         ]);
 
         // Assert
@@ -38,5 +39,6 @@ final class AddSourceCLICommandTest extends TestCase
         self::assertInstanceOf(AddSourceCommand::class, $command);
         self::assertSame('some-source', $command->name);
         self::assertSame('https://example.com/some-source', $command->feedUrl);
+        self::assertSame('some-category', $command->category);
     }
 }

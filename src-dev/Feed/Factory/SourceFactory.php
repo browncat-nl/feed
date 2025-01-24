@@ -3,6 +3,7 @@
 namespace Dev\Feed\Factory;
 
 use App\Common\Domain\Url\Url;
+use App\Feed\Domain\Category\Category;
 use App\Feed\Domain\Source\Source;
 use App\Feed\Domain\Source\SourceId;
 use Ramsey\Uuid\Uuid;
@@ -12,6 +13,7 @@ class SourceFactory
     private SourceId $id;
     private string $name;
     private Url $url;
+    private Category $category;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ class SourceFactory
         $this->id = new SourceId(Uuid::uuid4());
         $this->name = $faker->company();
         $this->url = Url::createFromString($faker->url());
+        $this->category = CategoryFactory::setup()->create();
     }
 
     public static function setup(): self
@@ -47,6 +50,7 @@ class SourceFactory
             $this->id,
             $this->name,
             $this->url,
+            $this->category
         );
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Feed\Domain\Source;
 
 use App\Common\Domain\Url\Url;
+use App\Feed\Domain\Category\Category;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -19,14 +20,19 @@ class Source
     #[ORM\Column(type: 'string', length: 512)]
     private string $feedUrl;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, cascade: ['persist'])]
+    private Category $category;
+
     public function __construct(
         SourceId $id,
         string $name,
         Url $feedUrl,
+        Category $category,
     ) {
         $this->id = (string) $id;
         $this->name = $name;
         $this->feedUrl = (string) $feedUrl;
+        $this->category = $category;
     }
 
     public function getId(): SourceId
@@ -45,5 +51,10 @@ class Source
     public function getUrl(): Url
     {
         return Url::createFromString($this->feedUrl);
+    }
+
+    public function getCategory(): Category
+    {
+        return $this->category;
     }
 }

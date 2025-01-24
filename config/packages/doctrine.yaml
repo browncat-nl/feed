@@ -22,6 +22,11 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Feed/Domain/Source'
                 prefix: 'App\Feed\Domain\Source'
                 alias: FeedSource
+            FeedCategory:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Feed/Domain/Category'
+                prefix: 'App\Feed\Domain\Category'
+                alias: FeedCategory
 
 when@prod:
     doctrine:
