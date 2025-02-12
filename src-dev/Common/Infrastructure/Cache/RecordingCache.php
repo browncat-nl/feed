@@ -27,7 +27,7 @@ class RecordingCache implements CacheInterface
     ) {
     }
 
-    public function get(string $key, callable $callback, float $beta = null, array &$metadata = null): mixed
+    public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
         $isHit = true;
 
