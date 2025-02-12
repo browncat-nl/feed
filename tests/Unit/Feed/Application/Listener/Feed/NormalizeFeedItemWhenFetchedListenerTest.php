@@ -23,6 +23,9 @@ final class NormalizeFeedItemWhenFetchedListenerTest extends TestCase
         $this->listener = new NormalizeFeedItemWhenFetchedListener($this->commandBus);
     }
 
+    /**
+     * @test
+     */
     public function it_should_normalize_the_fetched_feed_item(): void
     {
         // Arrange
